@@ -68,6 +68,8 @@ def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     # Strip empty rows
     # I think it makes one at the end of the file
     rows = [row for row in reader if len(row) == len(column_headers)]
+    # And remove any rows with blank data
+    rows = [row for row in rows if min(map(len, row)) > 0]
 
     QueryResults = namedtuple("QueryResults", column_headers)
     
