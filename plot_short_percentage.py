@@ -12,9 +12,10 @@ output_location = "aws-athena-query-results-lancs"
 result = execute_query_by_id(query_id, database, output_location)
 
 
-dates = [datetime.strptime(date, "%Y-%m-%d") for date in result.day]
-percentage_short = list(map(int, result.percentage_short))
-total_jobs = np.array([int(jobs) for jobs in result.total_jobs])
+lim = -60
+dates = [datetime.strptime(date, "%Y-%m-%d") for date in result.day][lim:]
+percentage_short = list(map(int, result.percentage_short))[lim:]
+total_jobs = np.array([int(jobs) for jobs in result.total_jobs][lim:])
 total_jobs_normalised = 100*total_jobs/max(total_jobs)
 
 total_short = (np.array(percentage_short)/100) * total_jobs
@@ -30,23 +31,29 @@ if trim_xrange:
 
 
 # bar chart percentage of short jobs
-"""plt.bar(dates, percentage_short)
+plt.bar(dates, percentage_short)
 plt.ylim(top=100)
 plt.gca().yaxis.grid(True)
 plt.xlabel("Date")
 plt.ylabel("% short jobs per day")
 plt.plot(dates, total_jobs_normalised, "r-")
 plt.show()
-"""
+
+plt.clf()
+plt.cla()
+plt.close()
 
 # line chart showing total and short jobs
-"""plt.plot(dates, total_jobs, label="Total jobs")
+plt.plot(dates, total_jobs, label="Total jobs")
 plt.plot(dates, total_short, "r", label="Short jobs")
 plt.xlabel("Date")
 plt.ylabel("Jobs")
 plt.legend()
 plt.show()
-"""
+
+plt.clf()
+plt.cla()
+plt.close()
 
 # stacked bar charts
 total_long = total_jobs-total_short
