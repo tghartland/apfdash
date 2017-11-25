@@ -3,6 +3,9 @@ import csv
 import time
 from collections import namedtuple
 import pprint
+from datetime import timedelta
+
+from cachier import cachier
 
 import boto3
 import botocore
@@ -18,7 +21,11 @@ athena = boto3.client("athena")
 class QueryExecutionException:
     pass
 
+class QueryResult:
+    def __init__(self):
+        pass
 
+@cachier(stale_after=timedelta(minutes=10))
 def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     query = athena.get_named_query(NamedQueryId=query_id)
     
@@ -52,7 +59,6 @@ def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     if not execution["QueryExecution"]["Status"]["State"] == "SUCCEEDED":
         raise QueryExecutionException("Execution final state: {}".format(execution["QueryExecution"]["Status"]["State"]))
     
-    
     # Download the object into a file-like object
     file_data = io.BytesIO()
     s3.download_fileobj(bucket, key, file_data)
@@ -71,8 +77,13 @@ def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     # And remove any rows with blank data
     rows = [row for row in rows if min(map(len, row)) > 0]
 
-    QueryResults = namedtuple("QueryResults", column_headers)
+    # QueryResults = namedtuple("QueryResults", column_headers+["query_metadata",])
+    result_object = QueryResult()
+    result_object.query_metadata = execution
     
     columns = zip(*rows)
-
-    return QueryResults(*columns)
+    for name, data in zip(column_headers, columns):
+        setattr(result_object, name, data)
+    
+    # return QueryResults(*columns, execution)
+    return result_object
