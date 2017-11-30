@@ -1,6 +1,7 @@
 import pprint
+import time
 
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from matplotlib import pyplot as plt
 from matplotlib.dates import DateFormatter
 
@@ -28,7 +29,11 @@ def plot_for_queue(queue, times, total_jobs, short_jobs):
 
     ax.bar(times, short_jobs, color="red", width=1/24, align="edge", label="Short jobs")
     ax.bar(times, long_jobs, color="blue", width=1/24, align="edge", bottom=short_jobs, label="Long jobs")
-
+    
+    current_time = datetime.now()
+    x_axis_start = current_time-timedelta(1)
+    ax.set_xlim(left=x_axis_start, right=datetime.now())
+    
     # Borders are only being drawn on the first bar because of a bug in matplotlib 2.1.0, waiting for next minor release to fix it
     # https://github.com/matplotlib/matplotlib/issues/9351
 
