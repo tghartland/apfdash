@@ -4,6 +4,9 @@ import time
 from collections import namedtuple
 import pprint
 from datetime import timedelta
+import sys
+import prettytable
+import argparse
 
 from cachier import cachier
 
@@ -80,6 +83,8 @@ def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     # QueryResults = namedtuple("QueryResults", column_headers+["query_metadata",])
     result_object = QueryResult()
     result_object.query_metadata = execution
+    result_object.column_headers = column_headers
+    result_object.rows = rows
     
     columns = zip(*rows)
     for name, data in zip(column_headers, columns):
@@ -87,3 +92,27 @@ def execute_query_by_id(query_id, database, to_bucket, timeout=10):
     
     # return QueryResults(*columns, execution)
     return result_object
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Execute an athena query")
+    
+    parser.add_argument("query_id", help="query ID to execute")
+    parser.add_argument("--limit", type=int)
+    
+    args = parser.parse_args()
+        
+    database = "apfhistorylong"
+    output_location = "aws-athena-query-results-lancs"
+    
+    result = execute_query_by_id(args.query_id, database, output_location)
+    
+    table = prettytable.PrettyTable(result.column_headers)
+    
+    for i, row in enumerate(result.rows):
+        if args.limit:
+            if i > args.limit:
+                break
+        table.add_row(row)
+    
+    print(table)
