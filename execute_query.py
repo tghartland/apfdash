@@ -99,7 +99,7 @@ if __name__ == "__main__":
     
     parser.add_argument("query_id", help="query ID to execute")
     parser.add_argument("--limit", type=int)
-    
+    parser.add_argument("--meta", action="store_const", dest="show_meta", const=True, default=False)    
     args = parser.parse_args()
         
     database = "apfhistorylong"
@@ -116,3 +116,7 @@ if __name__ == "__main__":
         table.add_row(row)
     
     print(table)
+    
+    if args.show_meta:
+        print()
+        pprint.pprint(result.query_metadata)
