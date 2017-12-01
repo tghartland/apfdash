@@ -19,8 +19,6 @@ result = execute_query_by_id(query_id, database, output_location)
 bytes_scanned = result.query_metadata["QueryExecution"]["Statistics"]["DataScannedInBytes"]
 execution_duration = result.query_metadata["QueryExecution"]["Statistics"]["EngineExecutionTimeInMillis"]
 
-print(dir(result))
-
 def plot_for_queue(queue, times, total_jobs, short_jobs):
 
     long_jobs = total_jobs-short_jobs
@@ -50,6 +48,7 @@ def plot_for_queue(queue, times, total_jobs, short_jobs):
     plt.show()
 
 for queue in set(result.match_apf_queue):
+    if not "LANCS" in queue: continue
     times = [datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f") for q, time in zip(result.match_apf_queue, result.job_time) if q == queue]
     total_jobs = np.array([int(jobs) for q, jobs in zip(result.match_apf_queue, result.total_jobs) if q == queue])
     
