@@ -48,7 +48,6 @@ def plot_for_queue(queue, times, total_jobs, short_jobs):
     plt.show()
 
 for queue in set(result.match_apf_queue):
-    if not "LANCS" in queue: continue
     times = [datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f") for q, time in zip(result.match_apf_queue, result.job_time) if q == queue]
     total_jobs = np.array([int(jobs) for q, jobs in zip(result.match_apf_queue, result.total_jobs) if q == queue])
     
