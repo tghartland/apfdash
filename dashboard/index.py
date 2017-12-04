@@ -26,12 +26,15 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     print("routing pathname", pathname)
-    try:
-        page, args = routes.match(pathname)
-    except RequestRedirect as redirect:
-        page, args = routes.match(redirect.new_url.replace("http://", ""))
-    except NotFound:
-        return "404"
+    while True:
+        try:
+            page, args = routes.match(pathname)
+        except RequestRedirect as redirect:
+            pathname = redirect.new_url.replace("http://", "")
+        except NotFound:
+            return "404"
+        else:
+            break
     
     if page == "index":
         return index_app.layout

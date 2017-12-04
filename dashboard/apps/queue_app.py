@@ -73,7 +73,7 @@ def generate_plot(queue_name):
 def generate_layout(queue_name):
     plot = generate_plot(queue_name)
     if plot is None:
-        return [html.Link("Index", href="/"), html.Div("No queue with that name"),]
+        return [dcc.Link("Index", href="/"), html.Div("No queue with that name"),]
     
     layout =  [
         dcc.Link("Index", href="/"),
