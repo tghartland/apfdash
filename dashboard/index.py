@@ -5,6 +5,8 @@ import dash_html_components as html
 from werkzeug.routing import Map, Rule
 from werkzeug.routing import NotFound, RequestRedirect
 
+import datasources
+
 routing_map = Map([
     Rule("/", endpoint="index"),
     Rule("/queue/<string:queue_name>/", endpoint="queue"),
