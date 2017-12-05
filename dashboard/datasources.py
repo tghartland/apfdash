@@ -1,5 +1,8 @@
 import pprint
 from collections import namedtuple
+from datetime import datetime
+from dateutil.tz import tzutc
+import io
 
 import pandas as pd
 
@@ -27,7 +30,24 @@ class Datasources:
     queue_comparison_30d = None
     individual_queues_24h = None
     
-    tracked_buckets = []
+    query_data = {}
+
+    @staticmethod
+    def get_latest_data_for(bucket_name):
+        name, date = most_recent_object_in_bucket(bucket_name)
+        Datasources.query_data[bucket_name] = Datasources.query_data.get(bucket_name, {"date": datetime(1, 1, 1, tzinfo=tzutc())})
+        if date > Datasources.query_data[bucket_name]["date"]:
+            file_data = io.BytesIO()
+            s3.download_fileobj(bucket_name, name, file_data)
+            file_data.seek(0)
+            bytes_data = file_data.read()
+            string_data = str(bytes_data, "utf8")
+            string_file = io.StringIO(string_data)
+            string_file.seek(0)
+            Datasources.query_data[bucket_name]["data"] = pd.read_csv(string_file)
+            
+            Datasources.query_data[bucket_name]["date"] = date
+        return Datasources.query_data[bucket_name]["data"].copy()
     
     @staticmethod
     def update_data_sources():

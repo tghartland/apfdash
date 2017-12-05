@@ -10,11 +10,12 @@ import pandas as pd
 
 from app import app
 
-df = pd.read_csv("https://s3.amazonaws.com/aws-athena-query-results-lancs/cf39090d-324f-4b75-9054-90c3f465382a.csv")
-df.insert(5, "long_jobs", df["total_jobs"]-df["short_jobs"])
+from datasources import Datasources
+
+#df = pd.read_csv("https://s3.amazonaws.com/aws-athena-query-results-lancs/cf39090d-324f-4b75-9054-90c3f465382a.csv")
+#df.insert(5, "long_jobs", df["total_jobs"]-df["short_jobs"])
 
 def generate_table(search_term, dataframe, max_rows=10):
-    dataframe = dataframe.drop("long_jobs", axis=1)
     return html.Table(
         # Header
         [html.Tr([html.Th(col) for col in dataframe.columns])] +
@@ -28,6 +29,7 @@ def generate_table(search_term, dataframe, max_rows=10):
     )
 
 def generate_plot(dataframe, limit=10, search_term=None):
+    dataframe.insert(5, "long_jobs", dataframe["total_jobs"]-dataframe["short_jobs"])
     if not search_term is None:
         if len(search_term) > 0:
             dataframe = dataframe[dataframe["match_apf_queue"].str.contains(search_term, case=False)]
@@ -76,7 +78,7 @@ layout = html.Div(
         html.Div([
             #html.H4("Queue comparison", id="title"),
             html.Div(style={"width":"100%", "height":"1", "overflow":"hidden",}),
-            dcc.Graph(id="queue-comparison", figure=generate_plot(df), config={'displayModeBar': False}),
+            dcc.Graph(id="queue-comparison", figure={}, config={'displayModeBar': False}),
             ],
             style=dict(
                 width="60%",
@@ -86,9 +88,9 @@ layout = html.Div(
         html.Div([
             html.Div([
                 dcc.Input(id='queue-search', value='', type="text", style={"display":"inline-block"}),
-                html.Div("", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
+                html.Div(" ", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
             ]),
-            generate_table("", df, 10),
+            generate_table("", Datasources.get_latest_data_for("aws-athena-query-results-lancs"), 10),
             ],
             style=dict(
                 width="40%",
@@ -106,7 +108,8 @@ layout = html.Div(
     [Input(component_id='queue-search', component_property='value')]
 )
 def update_plot(input_value):
-    return generate_plot(df, search_term=input_value)
+    return generate_plot(Datasources.get_latest_data_for("aws-athena-query-results-lancs"),
+        search_term=input_value)
 
 
 @app.callback(
@@ -114,7 +117,7 @@ def update_plot(input_value):
     [Input(component_id='queue-search', component_property='value')]
 )
 def update_output_div(input_value):
-    return generate_table(input_value, df)
+    return generate_table(input_value, Datasources.get_latest_data_for("aws-athena-query-results-lancs"))
 
 
 @app.callback(
@@ -122,10 +125,10 @@ def update_output_div(input_value):
     [Input("queue-search", "value")]
 )
 def update_search_feedback(input_value):
-    matching_results = len([q for q in df["match_apf_queue"] if input_value.lower() in q.lower()])
-    showing, hidden = min(matching_results, 10), max(0, matching_results-10)
+    #matching_results = len([q for q in df["match_apf_queue"] if input_value.lower() in q.lower()])
+    #showing, hidden = min(matching_results, 10), max(0, matching_results-10)
     
-    return "Showing {} results ({} hidden)".format(showing, hidden)
+    return "Showing {} results ({} hidden)".format("x", "y") # showing, hidden)
 
 if __name__ == '__main__':
     app.run_server()
