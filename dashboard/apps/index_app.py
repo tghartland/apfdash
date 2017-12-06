@@ -124,10 +124,11 @@ def update_output_div(input_value):
     [Input("queue-search", "value")]
 )
 def update_search_feedback(input_value):
-    #matching_results = len([q for q in df["match_apf_queue"] if input_value.lower() in q.lower()])
-    #showing, hidden = min(matching_results, 10), max(0, matching_results-10)
+    df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d")
+    matching_results = len([q for q in df["match_apf_queue"] if input_value.lower() in q.lower()])
+    showing, hidden = min(matching_results, 10), max(0, matching_results-10)
     
-    return "Showing {} results ({} hidden)".format("x", "y") # showing, hidden)
+    return "Showing {} results ({} hidden)".format(showing, hidden)
 
 if __name__ == '__main__':
     app.run_server()

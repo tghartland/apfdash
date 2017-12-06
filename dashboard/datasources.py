@@ -34,6 +34,10 @@ class Datasources:
 
     @staticmethod
     def get_latest_data_for(bucket_name):
+        if bucket_name in Datasources.query_data:
+            if (datetime.now(tzutc())-Datasources.query_data[bucket_name]["checked_for_update"]).seconds <= 5*60:
+                return Datasources.query_data[bucket_name]["data"].copy()
+                
         name, date = most_recent_object_in_bucket(bucket_name)
         Datasources.query_data[bucket_name] = Datasources.query_data.get(bucket_name, {"modified": datetime(1, 1, 1, tzinfo=tzutc())})
         if date > Datasources.query_data[bucket_name]["modified"]:
@@ -48,6 +52,8 @@ class Datasources:
             Datasources.query_data[bucket_name]["filename"] = name
             Datasources.query_data[bucket_name]["modified"] = date
             Datasources.query_data[bucket_name]["downloaded"] = datetime.now(tzutc())
+        
+        Datasources.query_data[bucket_name]["checked_for_update"] = datetime.now(tzutc())
         return Datasources.query_data[bucket_name]["data"].copy()
     
     @staticmethod

@@ -12,7 +12,7 @@ from app import app
 from datasources import Datasources
 
 def debug_table():
-    column_names = ["Bucket", "Latest object", "Object Modified", "Downloaded"]
+    column_names = ["Bucket", "Latest object", "Object modified", "Downloaded", "Checked for update"]
 
     rows = [html.Tr([html.Td(n) for n in column_names])]
     
@@ -22,6 +22,7 @@ def debug_table():
             html.Td(obj["filename"]),
             html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["modified"])),
             html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["downloaded"])),
+            html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["checked_for_update"])),
         ]))
 
     return html.Table(rows)
