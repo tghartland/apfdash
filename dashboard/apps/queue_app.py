@@ -10,8 +10,6 @@ import pandas as pd
 from datasources import Datasources
 from app import app
 
-#df = pd.read_csv("https://s3.amazonaws.com/aws-athena-query-results-lancs/72829fca-edf6-4b0e-a936-72b65d9b5b7b.csv")
-#df["job_time"] = pd.to_datetime(df["job_time"], format="%Y-%m-%d %H:%M:%S.%f")
 
 def generate_plot(queue_name):
     df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-24h")
@@ -75,10 +73,13 @@ def generate_plot(queue_name):
 def generate_layout(queue_name):
     plot = generate_plot(queue_name)
     if plot is None:
-        return [dcc.Link("Index", href="/"), html.Div("No queue with that name"),]
+        return [dcc.Link("Index", href="/"),
+                dcc.Link("Debug", href="/debug/"),
+                html.Div("No queue with that name"),]
     
     layout =  [
         dcc.Link("Index", href="/"),
+        dcc.Link("Debug", href="/debug/"),
         html.H4(queue_name),
         html.Div([
             plot,
