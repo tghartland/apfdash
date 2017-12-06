@@ -35,8 +35,8 @@ class Datasources:
     @staticmethod
     def get_latest_data_for(bucket_name):
         name, date = most_recent_object_in_bucket(bucket_name)
-        Datasources.query_data[bucket_name] = Datasources.query_data.get(bucket_name, {"date": datetime(1, 1, 1, tzinfo=tzutc())})
-        if date > Datasources.query_data[bucket_name]["date"]:
+        Datasources.query_data[bucket_name] = Datasources.query_data.get(bucket_name, {"modified": datetime(1, 1, 1, tzinfo=tzutc())})
+        if date > Datasources.query_data[bucket_name]["modified"]:
             file_data = io.BytesIO()
             s3.download_fileobj(bucket_name, name, file_data)
             file_data.seek(0)
@@ -45,12 +45,14 @@ class Datasources:
             string_file = io.StringIO(string_data)
             string_file.seek(0)
             Datasources.query_data[bucket_name]["data"] = pd.read_csv(string_file)
-            
-            Datasources.query_data[bucket_name]["date"] = date
+            Datasources.query_data[bucket_name]["filename"] = name
+            Datasources.query_data[bucket_name]["modified"] = date
+            Datasources.query_data[bucket_name]["downloaded"] = datetime.now(tzutc())
         return Datasources.query_data[bucket_name]["data"].copy()
     
     @staticmethod
     def update_data_sources():
+        return
         print(most_recent_object_in_bucket("aws-athena-query-results-lancs"))
         """
         Here:

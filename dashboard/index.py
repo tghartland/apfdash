@@ -10,6 +10,7 @@ import datasources
 routing_map = Map([
     Rule("/", endpoint="index"),
     Rule("/queue/<string:queue_name>/", endpoint="queue"),
+    Rule("/debug/", endpoint="debug")
 ])
 
 routes = routing_map.bind("")
@@ -17,6 +18,7 @@ routes = routing_map.bind("")
 from app import app
 from apps import index_app
 from apps import queue_app
+from apps import debug_app
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -30,7 +32,7 @@ def display_page(pathname):
     print("routing pathname", pathname)
     while True:
         try:
-            page, args = routes.match(pathname)
+            endpoint, args = routes.match(pathname)
         except RequestRedirect as redirect:
             pathname = redirect.new_url.replace("http://", "")
         except NotFound:
@@ -38,10 +40,12 @@ def display_page(pathname):
         else:
             break
     
-    if page == "index":
+    if endpoint == "index":
         return index_app.layout
-    elif page == "queue":
+    elif endpoint == "queue":
         return queue_app.generate_layout(args.get("queue_name"))
+    elif endpoint == "debug":
+        return debug_app.generate_layout()
 
 if __name__ == '__main__':
     app.run_server(debug=True)
