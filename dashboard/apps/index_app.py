@@ -12,8 +12,6 @@ from app import app
 
 from datasources import Datasources
 
-#df = pd.read_csv("https://s3.amazonaws.com/aws-athena-query-results-lancs/cf39090d-324f-4b75-9054-90c3f465382a.csv")
-#df.insert(5, "long_jobs", df["total_jobs"]-df["short_jobs"])
 
 def generate_table(search_term, dataframe, max_rows=10):
     return html.Table(
@@ -90,7 +88,7 @@ layout = html.Div(
                 dcc.Input(id='queue-search', value='', type="text", style={"display":"inline-block"}),
                 html.Div(" ", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
             ]),
-            generate_table("", Datasources.get_latest_data_for("aws-athena-query-results-lancs"), 10),
+            generate_table(" ", Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"), 10),
             ],
             style=dict(
                 width="40%",
@@ -108,7 +106,7 @@ layout = html.Div(
     [Input(component_id='queue-search', component_property='value')]
 )
 def update_plot(input_value):
-    return generate_plot(Datasources.get_latest_data_for("aws-athena-query-results-lancs"),
+    return generate_plot(Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"),
         search_term=input_value)
 
 
@@ -117,7 +115,7 @@ def update_plot(input_value):
     [Input(component_id='queue-search', component_property='value')]
 )
 def update_output_div(input_value):
-    return generate_table(input_value, Datasources.get_latest_data_for("aws-athena-query-results-lancs"))
+    return generate_table(input_value, Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"))
 
 
 @app.callback(

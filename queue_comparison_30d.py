@@ -8,7 +8,7 @@ from execute_query import execute_query_by_id
 
 query_id = "00bb4f20-25b0-4d48-a16a-57870c7cbc2c"
 database = "apfhistorylong"
-output_location = "aws-athena-query-results-lancs"
+output_location = "aws-athena-query-results-lancs-30d"
 
 result = execute_query_by_id(query_id, database, output_location)
 

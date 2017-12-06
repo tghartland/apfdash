@@ -12,7 +12,7 @@ from execute_query import execute_query_by_id
 
 query_id = "5e1549f7-f2a5-40ee-9345-cb488c0feabc"
 database = "apfhistorylong"
-output_location = "aws-athena-query-results-lancs"
+output_location = "aws-athena-query-results-lancs-24h"
 
 result = execute_query_by_id(query_id, database, output_location)
 
@@ -48,6 +48,7 @@ def plot_for_queue(queue, times, total_jobs, short_jobs):
     plt.show()
 
 for queue in set(result.match_apf_queue):
+    break
     times = [datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f") for q, time in zip(result.match_apf_queue, result.job_time) if q == queue]
     total_jobs = np.array([int(jobs) for q, jobs in zip(result.match_apf_queue, result.total_jobs) if q == queue])
     
