@@ -34,12 +34,12 @@ def debug_query_history():
     
     rows = [html.Tr([html.Td(n) for n in column_names])]
     
-    for event in reversed(QueryHistory.history):
+    for event in reversed(QueryHistory.history)[0:20]:
         rows.append(html.Tr(
             [html.Td(str(x)) for x in event]
             )
         )
-    print(rows)
+    
     return html.Table(rows)
 
 def generate_layout():

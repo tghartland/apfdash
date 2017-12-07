@@ -58,28 +58,8 @@ class Datasources:
         Datasources.query_data[bucket_name]["checked_for_update"] = datetime.now(tzutc())
         return Datasources.query_data[bucket_name]["data"].copy()
     
-    @staticmethod
-    def update_data_sources():
-        return
-        print(most_recent_object_in_bucket("aws-athena-query-results-lancs"))
-        """
-        Here:
-        Select most recent files from bucket for each query TYPE
-        and then store a pandas dataframe for each to use.
-        Update the dataframe every 10 minutes or so, after
-        checking if there is a new file to use.
-        Use apschedular as in
-        https://github.com/H4rtland/rpi_muons/blob/master/analysis/scheduler.py
-        
-        for bucket, variable in Datasources.tracked_buckets:
-            file = most_recent_object_in_bucket(bucket_name)
-            
-        """
-    
-    @staticmethod
-    def track_bucket(bucket_name, variable):
-        Datasources.tracked_buckets.append([bucket_name, variable])
-        
+
+
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from functools import partial
@@ -136,8 +116,18 @@ job1 = scheduler.add_job(
             "aws-athena-query-results-lancs-30d"),
     "interval", seconds=600)
 
+# jobs per hour in past 24 hours
+job2 = scheduler.add_job(
+    partial(run_query,
+            "5e1549f7-f2a5-40ee-9345-cb488c0feabc",
+            "aws-athena-query-results-lancs-24h"),
+    "interval", seconds=600)
+
 scheduler.start()
 
 
 run_query("00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
           "aws-athena-query-results-lancs-30d")
+
+run_query("5e1549f7-f2a5-40ee-9345-cb488c0feabc",
+          "aws-athena-query-results-lancs-24h")
