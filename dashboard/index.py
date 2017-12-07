@@ -29,7 +29,6 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    print("routing pathname", pathname)
     while True:
         try:
             endpoint, args = routes.match(pathname)

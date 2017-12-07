@@ -1,3 +1,4 @@
+import time
 import pprint
 from collections import namedtuple
 from datetime import datetime
@@ -9,6 +10,7 @@ import pandas as pd
 import boto3
 
 s3 = boto3.client("s3")
+athena = boto3.client("athena")
 
 def most_recent_object_in_bucket(bucket_name):
     BucketItem = namedtuple("BucketItem", ["name", "modified"])
@@ -78,4 +80,64 @@ class Datasources:
     def track_bucket(bucket_name, variable):
         Datasources.tracked_buckets.append([bucket_name, variable])
         
-Datasources.update_data_sources()
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from functools import partial
+
+scheduler = BackgroundScheduler()
+
+QueryExecutionResult = namedtuple("QueryExecutionResult", ["name", "query_id", "result_file", "time", "status"])
+
+class QueryHistory:
+    history = []
+
+def run_query(query_id, bucket, database="apfhistorylong"):
+    query = athena.get_named_query(NamedQueryId=query_id)
+    
+    response = athena.start_query_execution(
+        QueryString=query["NamedQuery"]["QueryString"],
+        QueryExecutionContext={
+            "Database": database,
+        },
+        ResultConfiguration={
+            "OutputLocation": "s3://{}/".format(bucket),
+        }
+    )
+    
+    execution_id = response["QueryExecutionId"]
+    
+    execution = athena.get_query_execution(QueryExecutionId=execution_id)
+    
+    wait_start_time = time.time()
+    timeout = 30
+    
+    while execution["QueryExecution"]["Status"]["State"] == "RUNNING":
+        if time.time()-wait_start_time > timeout:
+            execution["QueryExecution"]["Status"]["State"] = "*TIMEOUT"
+            break
+        time.sleep(1)
+        execution = athena.get_query_execution(QueryExecutionId=execution_id)
+    
+    QueryHistory.history.append(
+        QueryExecutionResult(
+            query["NamedQuery"]["Name"],
+            query_id,
+            execution["QueryExecution"]["ResultConfiguration"]["OutputLocation"],
+            datetime.now(tzutc()),
+            execution["QueryExecution"]["Status"]["State"],
+        )
+    )
+    
+    
+# queue comparison 30d
+job1 = scheduler.add_job(
+    partial(run_query,
+            "00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
+            "aws-athena-query-results-lancs-30d"),
+    "interval", seconds=600)
+
+scheduler.start()
+
+
+run_query("00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
+          "aws-athena-query-results-lancs-30d")
