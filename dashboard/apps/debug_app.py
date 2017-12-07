@@ -30,13 +30,23 @@ def debug_table():
 
 
 def debug_query_history():
-    column_names = ["Query name", "Query ID", "Result file", "Execution time", "Status"]
+    column_names = ["Query name", "Result file",
+                    "Execution time", "Status", "Bytes scanned", "Cost", "Execution duration (ms)"]
+    
+    def format_row(row):
+        yield row[0]
+        yield row[2]
+        yield row[3].strftime("%a %d %b %H:%M:%S")
+        yield row[4]
+        yield humanize.naturalsize(row[5])
+        yield "${:.02f}".format(5*int(row[5])/1e12)
+        yield humanize.intcomma(row[6])
     
     rows = [html.Tr([html.Td(n) for n in column_names])]
     
-    for event in reversed(QueryHistory.history)[0:20]:
+    for event in list(reversed(QueryHistory.history))[0:30]:
         rows.append(html.Tr(
-            [html.Td(str(x)) for x in event]
+            [html.Td(x) for x in format_row(event)]
             )
         )
     

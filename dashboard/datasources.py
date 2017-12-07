@@ -66,7 +66,7 @@ from functools import partial
 
 scheduler = BackgroundScheduler()
 
-QueryExecutionResult = namedtuple("QueryExecutionResult", ["name", "query_id", "result_file", "time", "status"])
+QueryExecutionResult = namedtuple("QueryExecutionResult", ["name", "query_id", "result_file", "time", "status", "bytes_scanned", "execution_duration"])
 
 class QueryHistory:
     history = []
@@ -105,6 +105,8 @@ def run_query(query_id, bucket, database="apfhistorylong"):
             execution["QueryExecution"]["ResultConfiguration"]["OutputLocation"],
             datetime.now(tzutc()),
             execution["QueryExecution"]["Status"]["State"],
+            execution["QueryExecution"]["Statistics"]["DataScannedInBytes"],
+            execution["QueryExecution"]["Statistics"]["EngineExecutionTimeInMillis"],
         )
     )
     
