@@ -54,7 +54,6 @@ def debug_query_history():
 
 def generate_layout():
     layout = [
-        dcc.Link("Index", href="/"),
         html.Div([
             html.H4("Current data"),
             debug_table(),

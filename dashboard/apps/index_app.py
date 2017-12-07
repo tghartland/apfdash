@@ -60,6 +60,7 @@ def generate_plot(dataframe, limit=10, search_term=None):
             l=275,
         ),
         xaxis = go.XAxis(
+            title="Jobs",
             fixedrange=True,
         ),
         yaxis = go.YAxis(
@@ -73,7 +74,6 @@ def generate_plot(dataframe, limit=10, search_term=None):
 
 layout = html.Div(
     [
-        html.Div([dcc.Link("Debug", href="/debug/"),], style=dict(width="100%")),
         html.Div([
             #html.H4("Queue comparison", id="title"),
             html.Div(style={"width":"100%", "height":"1", "overflow":"hidden",}),

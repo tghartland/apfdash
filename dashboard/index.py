@@ -22,6 +22,11 @@ from apps import debug_app
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
+    html.Div([
+        dcc.Link("Index", href="/", style={"margin":"5px"}),
+        dcc.Link("Debug", href="/debug/", style={"margin":"5px"}),
+        html.Hr(style={"margin": "0px", "margin-top": "2px", "margin-bottom":"10px"}),
+    ], style={"width": "100%"}),
     html.Div(id='page-content')
 ])
 

@@ -115,21 +115,40 @@ def run_query(query_id, bucket, database="apfhistorylong"):
 job1 = scheduler.add_job(
     partial(run_query,
             "00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
-            "aws-athena-query-results-lancs-30d"),
-    "interval", seconds=600)
+            "aws-athena-query-results-lancs-30d"
+            ),
+    "interval",
+    seconds=600,
+)
 
 # jobs per hour in past 24 hours
 job2 = scheduler.add_job(
     partial(run_query,
             "5e1549f7-f2a5-40ee-9345-cb488c0feabc",
-            "aws-athena-query-results-lancs-24h"),
-    "interval", seconds=600)
+            "aws-athena-query-results-lancs-24h"
+            ),
+    "interval",
+    seconds=600,
+)
+
+# jobs per day in past 30 days
+job3 = scheduler.add_job(
+    partial(run_query,
+            "c47f5e49-6861-46b6-9fc5-faa44048ee9d",
+            "aws-athena-query-results-lancs-history-30d"
+            ),
+    "interval",
+    seconds=600,
+)
 
 scheduler.start()
 
 
-run_query("00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
-          "aws-athena-query-results-lancs-30d")
+#run_query("00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
+#          "aws-athena-query-results-lancs-30d")
 
-run_query("5e1549f7-f2a5-40ee-9345-cb488c0feabc",
-          "aws-athena-query-results-lancs-24h")
+#run_query("5e1549f7-f2a5-40ee-9345-cb488c0feabc",
+#          "aws-athena-query-results-lancs-24h")
+
+#run_query("c50de2b4-dc45-4f1d-af4b-ee10b5561bfa",
+#            "aws-athena-query-results-lancs-history-30d")
