@@ -9,7 +9,8 @@ from dateutil.tz import tzutc
 
 from app import app
 
-from datasources import Datasources, QueryHistory
+from datasources import Datasources
+from scheduler import QueryHistory
 
 
 def debug_table():
