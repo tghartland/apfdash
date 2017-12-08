@@ -77,7 +77,7 @@ job3 = scheduler.add_job(
 
 scheduler.start()
 
-
+"""
 run_query("00bb4f20-25b0-4d48-a16a-57870c7cbc2c",
           "aws-athena-query-results-lancs-30d")
 
@@ -86,3 +86,4 @@ run_query("5e1549f7-f2a5-40ee-9345-cb488c0feabc",
 
 run_query("c50de2b4-dc45-4f1d-af4b-ee10b5561bfa",
             "aws-athena-query-results-lancs-history-30d")
+"""

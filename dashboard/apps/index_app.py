@@ -2,6 +2,7 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table_experiments as dt
 
 import plotly.plotly as py
 import plotly.graph_objs as go
@@ -25,6 +26,51 @@ def generate_table(search_term, dataframe, max_rows=10):
         
         id="queue-table"
     )
+
+
+def generate_datatable():
+    #dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d")
+    #dataframe.loc[0:20]
+    #dataframe = dataframe[dataframe["match_apf_queue"] == "NCG-INGRID-PT_MCORE-7435"]
+    DF_GAPMINDER = pd.read_csv(
+        'https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv'
+    )
+    DF_GAPMINDER = DF_GAPMINDER[DF_GAPMINDER['year'] == 2007]
+    DF_GAPMINDER.loc[0:20]
+    print("Creating table")
+    #table = dt.DataTable(
+    #    rows=[{}], #dataframe.to_dict("records"),
+        #columns=dataframe.columns,
+        #filterable=True,
+        #sortable=True,
+    #)
+    #table = dt.DataTable(
+    #    # Initialise the rows
+    #    rows=DF_GAPMINDER.to_dict("records"),
+    #    row_selectable=True,
+    #    filterable=True,
+    #    sortable=True,
+    #    selected_row_indices=[],
+    #    id='table123',
+    #)
+    table = dt.DataTable(
+        rows=DF_GAPMINDER.to_dict('records'),
+
+        # optional - sets the order of columns
+        columns=sorted(DF_GAPMINDER.columns),
+
+        row_selectable=True,
+        filterable=True,
+        sortable=True,
+        selected_row_indices=[],
+        id='datatable-gapminder'
+    )
+    #print("Returning table")
+    #print()
+    #print(table)
+    #print()
+    return table
+
 
 def generate_plot(dataframe, limit=10, search_term=None):
     dataframe.insert(5, "long_jobs", dataframe["total_jobs"]-dataframe["short_jobs"])
@@ -72,33 +118,38 @@ def generate_plot(dataframe, limit=10, search_term=None):
         "layout": layout,
     }
 
-layout = html.Div(
-    [
-        html.Div([
-            #html.H4("Queue comparison", id="title"),
-            html.Div(style={"width":"100%", "height":"1", "overflow":"hidden",}),
-            dcc.Graph(id="queue-comparison", figure={}, config={'displayModeBar': False}),
-            ],
-            style=dict(
-                width="60%",
-                display="inline-block",
-            ),
-        ),
-        html.Div([
-            html.Div([
-                dcc.Input(id='queue-search', value='', type="text", style={"display":"inline-block"}),
-                html.Div(" ", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
-            ]),
-            generate_table(" ", Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"), 10),
-            ],
-            style=dict(
-                width="40%",
-                display="inline-block",
-            ),
-        ),
-    ],
-)
 
+def generate_layout():
+    layout = html.Div(
+        [
+            html.Div([
+                #html.H4("Queue comparison", id="title"),
+                html.Div(style={"width":"100%", "height":"1", "overflow":"hidden",}),
+                dcc.Graph(id="queue-comparison", figure={}, config={'displayModeBar': False}),
+                ],
+                style=dict(
+                    width="60%",
+                    display="inline-block",
+                ),
+            ),
+            html.Div([
+                html.Div([
+                    dcc.Input(id='queue-search', value='', type="text", style={"display":"inline-block"}),
+                    html.Div(" ", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
+                ]),
+                generate_table(" ", Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"), 10),
+                ],
+                style=dict(
+                    width="40%",
+                    display="inline-block",
+                ),
+            ),
+            html.Div("hi"),
+            generate_datatable(),
+        ],
+    )
+    #print(layout)    
+    return layout
 
 
 

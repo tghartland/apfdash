@@ -45,11 +45,11 @@ def display_page(pathname):
             break
     
     if endpoint == "index":
-        return index_app.layout
+        return index_app.generate_layout()
     elif endpoint == "queue":
         return queue_app.generate_layout(args.get("queue_name"))
     elif endpoint == "debug":
         return debug_app.generate_layout()
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
