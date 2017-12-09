@@ -1,6 +1,7 @@
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table_experiments as dt
 
 from werkzeug.routing import Map, Rule
 from werkzeug.routing import NotFound, RequestRedirect
@@ -22,6 +23,9 @@ from apps import debug_app
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
+    # Hidden data table to force it to send the data table js components
+    # https://github.com/plotly/dash-table-experiments/issues/18
+    html.Div(dt.DataTable(rows=[{}]), style={"display": "none"}),
     html.Div([
         dcc.Link("Index", href="/", style={"margin":"5px"}),
         dcc.Link("Debug", href="/debug/", style={"margin":"5px"}),
