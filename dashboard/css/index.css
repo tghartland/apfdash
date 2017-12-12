@@ -4,3 +4,19 @@
     color: #1EAEDB;
     text-decoration: underline;
 }
+
+.react-grid-Main{
+    height: 100%;
+}
+
+.react-grid-Container{
+    height: 100%;
+}
+
+.react-grid-Grid{
+    min-height: 100% !important;
+}
+
+.react-grid-Canvas{
+    height: 100% !important;
+}

@@ -121,6 +121,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         yaxis = go.YAxis(
             fixedrange=True,
         ),
+        height=int(180+270*limit/10),
     )
     return {
         "data": data,
@@ -156,21 +157,22 @@ def generate_layout():
                 ),
             ),
             html.Div([
-                #html.Div(style={"width":"100%", "height":"1", "overflow":"hidden",}),
-                # html.Div([
-                #     dcc.Input(id='queue-search', value='', type="text", style={"display":"inline-block"}),
-                #     html.Div(" ", id="table-search-feedback", style={"display":"inline-block", "margin-left": 10})
-                # ]),
-                # generate_table(" ", Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"), 10),
-                generate_datatable(),
+                    generate_datatable(),
                 ],
-                style=dict(
-                    width="50%",
-                    float="right",
-                ),
+                style={
+                    "width":"50%",
+                    "float":"right",
+                    "height":"100%",
+                    "min-height":"500px",
+                    "display":"table",
+                }
             ),
             
         ],
+        style={
+            "height":"100%",
+            "display":"flex",
+        }
     )
     
     return layout
