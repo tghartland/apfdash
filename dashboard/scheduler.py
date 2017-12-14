@@ -57,11 +57,12 @@ def run_query(query_id, bucket, database="apfhistorylong"):
 
 
 queries = [
-     # query id                               bucket
+    # query id                                bucket
     ("00bb4f20-25b0-4d48-a16a-57870c7cbc2c", "aws-athena-query-results-lancs-30d"),         # queue comparison 30d
     ("5e1549f7-f2a5-40ee-9345-cb488c0feabc", "aws-athena-query-results-lancs-24h"),         # jobs per hour in past 24 hours
     ("c50de2b4-dc45-4f1d-af4b-ee10b5561bfa", "aws-athena-query-results-lancs-history-30d"), # jobs per day in past 30 days
-    ("ac9419f3-88ad-4398-91d0-0763a4305d1e", "aws-athena-query-results-lancs-4h"),          # all columns from past four hours
+    ("ac9419f3-88ad-4398-91d0-0763a4305d1e", "aws-athena-query-results-lancs-4h"),          # all columns from past 4 hours
+    ("4e8fb630-f56e-4217-a4fc-3107b8fe6cb0", "aws-athena-query-results-lancs-all-48h"),     # queue, duration, wallclock columns from past 48 hours
 ]
 
 for query_id, bucket in queries:

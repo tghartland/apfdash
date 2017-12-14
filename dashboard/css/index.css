@@ -39,6 +39,10 @@
     grid-row-start: 1;
 }
 
+body {
+    margin: 0px;
+}
+
 /*html, body, #react-entry-point, #_dash-app-content, #page-content {
     height: 100%;
 }

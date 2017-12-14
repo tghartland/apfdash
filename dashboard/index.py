@@ -10,6 +10,7 @@ routing_map = Map([
     Rule("/", endpoint="index"),
     Rule("/queue/<string:queue_name>/", endpoint="queue"),
     Rule("/resource/", endpoint="resource"),
+    Rule("/distribution/", endpoint="distribution"),
     Rule("/debug/", endpoint="debug"),
 ])
 
@@ -20,6 +21,7 @@ from apps import index_app
 from apps import queue_app
 from apps import resource_app
 from apps import debug_app
+from apps import distribution_app
 
 app.layout = html.Div([
     # Stores url
@@ -33,13 +35,14 @@ app.layout = html.Div([
     html.Div([
         dcc.Link("Index", href="/", style={"margin":"5px"}),
         dcc.Link("Resource", href="/resource/", style={"margin":"5px"}),
+        dcc.Link("Distribution", href="/distribution/", style={"margin":"5px"}),
         dcc.Link("Debug", href="/debug/", style={"margin":"5px"}),
         html.Hr(style={"margin": "0px", "margin-top": "2px", "margin-bottom":"10px"}),
     ], style={"width": "100%"}),
     
     # Div to load page content into
-    html.Div(id='page-content')
-])
+    html.Div(id='page-content', style={"width": "100%", "height":"100%"})
+],)
 
 
 @app.callback(Output('page-content', 'children'),
@@ -61,6 +64,8 @@ def display_page(pathname):
         return queue_app.generate_layout(args.get("queue_name"))
     elif endpoint == "resource":
         return resource_app.generate_layout()
+    elif endpoint == "distribution":
+        return distribution_app.generate_layout()
     elif endpoint == "debug":
         return debug_app.generate_layout()
 
