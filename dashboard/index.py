@@ -9,7 +9,8 @@ from werkzeug.routing import NotFound, RequestRedirect
 routing_map = Map([
     Rule("/", endpoint="index"),
     Rule("/queue/<string:queue_name>/", endpoint="queue"),
-    Rule("/debug/", endpoint="debug")
+    Rule("/resource/", endpoint="resource"),
+    Rule("/debug/", endpoint="debug"),
 ])
 
 routes = routing_map.bind("")
@@ -17,6 +18,7 @@ routes = routing_map.bind("")
 from app import app
 from apps import index_app
 from apps import queue_app
+from apps import resource_app
 from apps import debug_app
 
 app.layout = html.Div([
@@ -30,6 +32,7 @@ app.layout = html.Div([
     # Header bar
     html.Div([
         dcc.Link("Index", href="/", style={"margin":"5px"}),
+        dcc.Link("Resource", href="/resource/", style={"margin":"5px"}),
         dcc.Link("Debug", href="/debug/", style={"margin":"5px"}),
         html.Hr(style={"margin": "0px", "margin-top": "2px", "margin-bottom":"10px"}),
     ], style={"width": "100%"}),
@@ -56,6 +59,8 @@ def display_page(pathname):
         return index_app.generate_layout()
     elif endpoint == "queue":
         return queue_app.generate_layout(args.get("queue_name"))
+    elif endpoint == "resource":
+        return resource_app.generate_layout()
     elif endpoint == "debug":
         return debug_app.generate_layout()
 
