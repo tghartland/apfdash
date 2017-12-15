@@ -1,4 +1,5 @@
 import time
+import threading
 from collections import namedtuple
 from datetime import datetime
 from dateutil.tz import tzutc
@@ -65,17 +66,41 @@ queries = [
     ("4e8fb630-f56e-4217-a4fc-3107b8fe6cb0", "aws-athena-query-results-lancs-all-48h"),     # queue, duration, wallclock columns from past 48 hours
 ]
 
+from app import logger
+
+
 for query_id, bucket in queries:
     scheduler.add_job(run_query, "interval", seconds=600, args=(query_id, bucket))
 
 scheduler.start()
 
-def update_now():
-    for query_id, bucket in queries:
-        run_query(query_id, bucket)
 
+
+def update_now():
+    threads = []
+    for query_id, bucket in queries:
+        t = threading.Thread(target=run_query, args=(query_id, bucket))
+        t.start()
+        threads.append(t)
+        
+    for thread in threads:
+        thread.join()
+
+start_time = time.time()
+
+
+print("Running queries now")
 update_now()
 
+print("Preloading latest csv data")
 # Preload data
+threads = []
 for query_id, bucket in queries:
-    Datasources.get_latest_data_for(bucket)
+    t = threading.Thread(target=Datasources.get_latest_data_for, args=(bucket,))
+    t.start()
+    threads.append(t)
+
+for thread in threads:
+    thread.join()
+
+print("Done ({:.02f}s)".format(time.time()-start_time))
