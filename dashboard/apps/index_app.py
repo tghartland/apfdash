@@ -60,7 +60,7 @@ def generate_datatable():
         sortable=True,
         editable=False,
         id="queue-datatable",
-        #min_height="100%",
+        min_height="800px",
     )
     
     return table
