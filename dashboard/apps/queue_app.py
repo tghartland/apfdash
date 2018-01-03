@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, date
+
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
@@ -8,22 +10,17 @@ import plotly.graph_objs as go
 import pandas as pd
 
 from datasources import Datasources
-from app import app
-
 
 def generate_plot_24h(queue_name):
     df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-24h")
     filtered_df = df[df["match_apf_queue"] == queue_name]
     
-    if len(filtered_df) == 0:
-        return None
-    
-    filtered_df.insert(4, "long_jobs", filtered_df["total_jobs"]-filtered_df["short_jobs"])
+    filtered_df.insert(4, "long_jobs", filtered_df["total_jobs"]-filtered_df["empty_jobs"])
     
     trace1 = go.Bar(
         x=filtered_df["job_time"],
-        y=filtered_df["short_jobs"],
-        name="Short jobs",
+        y=filtered_df["empty_jobs"],
+        name="Empty jobs",
         marker=dict(
             color="#C21E29",
         ),
@@ -81,17 +78,38 @@ def generate_plot_24h(queue_name):
 
 def generate_plot_30d(queue_name):
     df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-history-30d")
+    df["job_date"] = df["job_date"].apply(lambda d: datetime.date(datetime.strptime(d, "%Y-%m-%d")))
     filtered_df = df[df["match_apf_queue"] == queue_name]
     
-    if len(filtered_df) == 0:
-        return None
+    filtered_df.insert(4, "long_jobs", filtered_df["total_jobs"]-filtered_df["empty_jobs"])
     
-    filtered_df.insert(4, "long_jobs", filtered_df["total_jobs"]-filtered_df["short_jobs"])
+    #filtered_df.loc[-1] = [queue_name, datetime.today()-timedelta(60), 20, 10, 10]
+    
+    max_date = date.today()+timedelta(days=1)
+    # One day is added to the max date as the bars are positioned so
+    # that their left edge is on the day they represent.
+    # Without the +1 day the most recent bar is excluded.
+    min_date = date.today()-timedelta(days=30)
+    
+    # Add some data outside the range that will be displayed in the chart.
+    # This fixes the issue where if there was only one entry in the dataframe,
+    # the bar chart would not figure out that the bars were supposed
+    # to be one day wide.
+    for _date in [min_date-timedelta(days=60+i) for i in range(0, 10)]:
+        tmp_df = pd.DataFrame({
+            "match_apf_queue":queue_name,
+            "job_date":_date,
+            "total_jobs":0,
+            "empty_jobs":0,
+            "long_jobs":0
+        }, index=[0])
+        filtered_df = filtered_df.append(tmp_df, ignore_index=True)
+    
     
     trace1 = go.Bar(
         x=filtered_df["job_date"],
-        y=filtered_df["short_jobs"],
-        name="Short jobs",
+        y=filtered_df["empty_jobs"],
+        name="Empty jobs",
         marker=dict(
             color="#C21E29",
         ),
@@ -105,13 +123,12 @@ def generate_plot_30d(queue_name):
         marker=dict(
             color="#3A6CAC",
         ),
+        #width=24*3600*1000,
         offset=0.5,
     )
     
     data = [trace1, trace2]
     
-    min_date = df["job_date"].min()
-    max_date = df["job_date"].max()
     
     layout = go.Layout(
         title="30 days",
@@ -208,7 +225,10 @@ def generate_distribution(queue_name, ten_minutes=False):
 def generate_layout(queue_name):
     plot = generate_plot_24h(queue_name)
     if plot is None:
-        return [html.Div("No queue with that name"),]
+        plotdiv = []
+    else:
+        plotdiv = [plot,]
+        #return [html.Div("No queue with that name"),]
     
     plot2 = generate_plot_30d(queue_name)
     
@@ -216,7 +236,7 @@ def generate_layout(queue_name):
         html.H4(queue_name),
         html.Div([
             html.Div(
-                [plot,],
+                plotdiv,
                 style={
                     "width":"50%",
                     "display":"inline-block",

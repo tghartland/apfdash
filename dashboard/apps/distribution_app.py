@@ -32,6 +32,8 @@ def generate_plot(column):
 
 
 def generate_layout():
+    if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")) == 0:
+        return "No jobs in past 48 hours"
     layout = [
         html.Div([
             generate_plot("duration"),

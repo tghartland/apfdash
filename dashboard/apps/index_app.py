@@ -42,9 +42,9 @@ def generate_table(search_term, dataframe, max_rows=10):
 
 def generate_datatable():
     dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d")
-    dataframe["short_percentage"] = (100*dataframe["short_jobs"]/dataframe["total_jobs"]).round(2)
+    dataframe["empty_percentage"] = (100*dataframe["empty_jobs"]/dataframe["total_jobs"]).round(2)
     
-    dataframe = dataframe[["match_apf_queue", "total_jobs", "short_jobs", "short_percentage"]]
+    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty_percentage"]]
     
     # records = dataframe.to_dict("records")
     # for i, record in enumerate(records):
@@ -77,7 +77,7 @@ def update_plot(rows, limit):
 
 
 def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
-    dataframe.insert(5, "long_jobs", dataframe["total_jobs"]-dataframe["short_jobs"])
+    dataframe.insert(5, "long_jobs", dataframe["total_jobs"]-dataframe["empty_jobs"])
     """if not search_term is None:
         if len(search_term) > 0:
             dataframe = dataframe[dataframe["match_apf_queue"].str.contains(search_term, case=False)]"""
@@ -89,8 +89,8 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     
     trace1 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
-        x=dataframe["short_jobs"][0:limit][::-1],
-        name="Short jobs",
+        x=dataframe["empty_jobs"][0:limit][::-1],
+        name="Empty jobs",
         orientation="h",
         marker=dict(
             color="#C21E29",

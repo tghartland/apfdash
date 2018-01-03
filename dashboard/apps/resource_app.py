@@ -29,6 +29,8 @@ def generate_plot(grouping):
     if grouping is None:
         return {}
     dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")
+    if len(dataframe) == 0:
+        return {}
     dataframe = dataframe.sample(frac=0.25, random_state=0)
     dataframe["gridresource"] = dataframe["gridresource"].apply(lambda x: x.split()[0])
     dataframe["globaljobid"] = dataframe["globaljobid"].apply(lambda x: x.split(".")[0])
@@ -81,6 +83,8 @@ def update_plot(grouping):
 
 
 def generate_layout():
+    if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")) == 0:
+        return "No jobs in past 4 hours"
     layout = [
         html.Div([
             html.Div([
