@@ -87,7 +87,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     dataframe = dataframe.sort_values(by="order")
     dataframe.drop("order", axis=1)
     
-    dataframe["match_apf_queue"] = dataframe["match_apf_queue"].apply(lambda x: "<a href=\"/queue/" + x + "\">" + x + "</a>")
+    dataframe["match_apf_queue"] = dataframe["match_apf_queue"].apply(lambda x: "<a href=\"/queue/{0}\">{0}</a>".format(x))
     
     trace1 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
