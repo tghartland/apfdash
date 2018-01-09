@@ -1,3 +1,4 @@
+import os
 import time
 import threading
 from collections import namedtuple
@@ -5,7 +6,13 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 import boto3
-athena = boto3.client("athena")
+
+session = boto3.session.Session(
+    aws_access_key_id=os.environ["AWS_KEY"],
+    aws_secret_access_key=os.environ["AWS_SECRET"],
+    region_name=os.environ["AWS_REGION"],
+)
+athena = session.client("athena")
 
 from datasources import Datasources
 
