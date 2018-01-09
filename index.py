@@ -23,6 +23,8 @@ from apps import resource_app
 from apps import debug_app
 from apps import distribution_app
 
+server = app.server
+
 app.layout = html.Div([
     # Stores url
     dcc.Location(id='url', refresh=False),
