@@ -7,10 +7,10 @@ import io
 
 import pandas as pd
 
-import boto3
+from aws import session
 
-s3 = boto3.client("s3")
-athena = boto3.client("athena")
+s3 = session.client("s3")
+athena = session.client("athena")
 
 def most_recent_object_in_bucket(bucket_name):
     BucketItem = namedtuple("BucketItem", ["name", "modified"])
