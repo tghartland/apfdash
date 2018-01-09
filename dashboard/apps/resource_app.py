@@ -23,6 +23,7 @@ groupings = {
     "gridresource": "Grid resource",
     "globaljobid": "Factory",
     "jobstatus": "Job status",
+    "pandacount": "Empty/Nonempty",
 }
 
 def generate_plot(grouping):
@@ -36,6 +37,9 @@ def generate_plot(grouping):
     dataframe["globaljobid"] = dataframe["globaljobid"].apply(lambda x: x.split(".")[0])
 
     traces = []
+    
+    if grouping == "pandacount":
+        dataframe["pandacount"] = dataframe["pandacount"].apply(lambda x: {0:"Empty"}.get(x, "Nonempty"))
     
     for group in dataframe[grouping].unique():
         filtered_df = dataframe[dataframe[grouping] == group]
@@ -89,11 +93,7 @@ def generate_layout():
         html.Div([
             html.Div([
                 dcc.Dropdown(
-                    options=[
-                        {"label":"Grid resource", "value":"gridresource"},
-                        {"label":"Factory", "value":"globaljobid"},
-                        {"label":"Job status", "value":"jobstatus"},
-                    ],
+                    options=[{"label":name, "value":group} for group, name in groupings.items()],
                     value="gridresource",
                     clearable=False,
                     id="grouping-dropdown",
