@@ -9,12 +9,19 @@ from datasources import Datasources
 
 
 def generate_plot(column):
+    duration_limit = 1200
     dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")
-    dataframe = dataframe[dataframe[column] <= 400]
+    dataframe = dataframe[dataframe[column] <= duration_limit]
     
-    hist = go.Histogram(x=dataframe[column], xbins={"start":-0.5, "end":399.5, "size":1})
+    empty = dataframe[dataframe["pandacount"]==0]
+    nonempty = dataframe[dataframe["pandacount"]>0]
+    
+    
+    empty_hist = go.Histogram(x=empty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#C21E29"}, name="Empty")
+    nonempty_hist = go.Histogram(x=nonempty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#3A6CAC"}, name="Non-empty")
 
     layout = go.Layout(
+        barmode="stack",
         xaxis={"title": column},
         yaxis={"title": "Num jobs", "type":"log"},
         title="{} distribution of all jobs in past 48 hours".format(column),
@@ -24,7 +31,7 @@ def generate_plot(column):
     )
 
     figure = {
-        "data": [hist,],
+        "data": [empty_hist, nonempty_hist],
         "layout": layout,
     }
 
