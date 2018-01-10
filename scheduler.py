@@ -78,15 +78,19 @@ scheduler.start()
 
 
 
-def update_now():
-    threads = []
-    for query_id, bucket in queries:
-        t = threading.Thread(target=run_query, args=(query_id, bucket))
-        t.start()
-        threads.append(t)
-        
-    for thread in threads:
-        thread.join()
+def update_now(threaded=False):
+    if threaded:
+        threads = []
+        for query_id, bucket in queries:
+            t = threading.Thread(target=run_query, args=(query_id, bucket))
+            t.start()
+            threads.append(t)
+            
+        for thread in threads:
+            thread.join()
+    else:
+        for query_id, bucket in queries:
+            run_query(query_id, bucket)
 
 start_time = time.time()
 

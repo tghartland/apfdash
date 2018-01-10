@@ -189,7 +189,7 @@ def generate_distribution(queue_name, ten_minutes=False):
         hist = go.Histogram(x=dataframe["duration"], nbinsx=bins)
     
     layout = go.Layout(
-        title="Duration  distribution in past 4 hours{}".format(" (duration < 10m)" if ten_minutes else ""),
+        title="Duration distribution in past 4 hours{}".format(" (duration < 10m)" if ten_minutes else ""),
         xaxis = go.XAxis(
             title="Job duration (s)",
             fixedrange=True,
