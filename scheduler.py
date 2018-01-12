@@ -66,7 +66,8 @@ queries = [
     ("af8f85f3-ec5e-4513-89f3-d9bcdf9af29f", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
     ("73ddc08f-79ae-4502-a440-aa97ba73a10c", "aws-athena-query-results-lancs-history-30d"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
     ("efab784b-a182-4acf-80bf-b6e7ddaa3e79", "aws-athena-query-results-lancs-4h"),          # pnd_all_4h                    all columns for jobs in past 4 hours
-    ("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours
+    #("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours
+    ("6a33eb91-d745-4a99-bbfa-7d19d522eaee", "aws-athena-query-results-lancs-all-48h"),     # pnd_wc_pandacount_48h         all wallclock, pandacount for wc<1200 past 48 hours
 ]
 
 
@@ -95,10 +96,10 @@ def update_now(threaded=False):
 start_time = time.time()
 
 
-print("Running queries now")
+#print("Running queries now")
 #update_now()
 
-print("Preloading latest csv data")
+#print("Preloading latest csv data")
 # Preload data
 threads = []
 #for query_id, bucket in queries:
@@ -109,4 +110,4 @@ threads = []
 #for thread in threads:
 #    thread.join()
 
-print("Done ({:.02f}s)".format(time.time()-start_time))
+#print("Done ({:.02f}s)".format(time.time()-start_time))

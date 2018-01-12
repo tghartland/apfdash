@@ -43,7 +43,7 @@ def generate_layout():
         return "No jobs in past 48 hours"
     layout = [
         html.Div([
-            generate_plot("duration"),
+            #generate_plot("duration"),
             generate_plot("remotewallclocktime"),
         ],
         style={

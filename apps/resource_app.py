@@ -39,10 +39,12 @@ def generate_plot(grouping):
     traces = []
     
     if grouping == "pandacount":
-        dataframe["pandacount"] = dataframe["pandacount"].apply(lambda x: {0:"Empty"}.get(x, "Payload"))
+        dataframe["pandacount"] = dataframe["pandacount"].apply(lambda x: int(x>0))
     
     for group in dataframe[grouping].unique():
         filtered_df = dataframe[dataframe[grouping] == group]
+        if grouping == "pandacount":
+            group = {0:"Empty", 1:"Payload"}.get(group)
         traces.append(go.Scatter(
             x=filtered_df["remotewallclocktime"],
             y=filtered_df["remoteusercpu"]+filtered_df["remotesyscpu"],
