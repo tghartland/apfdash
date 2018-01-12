@@ -145,7 +145,7 @@ def generate_layout():
                                 {"label":"25", "value":25},
                                 {"label":"50", "value":50},
                             ],
-                            value=10,
+                            value=25,
                             clearable=False,
                             id="num-queues-dropdown",
                         ),
