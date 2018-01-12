@@ -96,17 +96,17 @@ start_time = time.time()
 
 
 print("Running queries now")
-update_now()
+#update_now()
 
 print("Preloading latest csv data")
 # Preload data
 threads = []
-for query_id, bucket in queries:
-    t = threading.Thread(target=Datasources.get_latest_data_for, args=(bucket,))
-    t.start()
-    threads.append(t)
+#for query_id, bucket in queries:
+#    t = threading.Thread(target=Datasources.get_latest_data_for, args=(bucket,))
+#    t.start()
+#    threads.append(t)
 
-for thread in threads:
-    thread.join()
+#for thread in threads:
+#    thread.join()
 
 print("Done ({:.02f}s)".format(time.time()-start_time))
