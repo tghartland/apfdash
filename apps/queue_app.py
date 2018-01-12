@@ -171,33 +171,33 @@ def generate_distribution(queue_name, ten_minutes=False):
     if len(dataframe) == 0:
         max_duration = 600
     else:
-        max_duration = max(dataframe["duration"])
+        max_duration = max(dataframe["remotewallclocktime"])
     
     x_range = [0, max_duration]
     
     if ten_minutes:
-        dataframe = dataframe[dataframe["duration"] <= 600]
+        dataframe = dataframe[dataframe["remotewallclocktime"] <= 600]
         x_range = [0, 600]
     
     empty = dataframe[dataframe["pandacount"]==0]
     nonempty = dataframe[dataframe["pandacount"]>0]
     
     if ten_minutes:
-        hist1 = go.Histogram(x=empty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#C21E29"}, name="Empty")
-        hist2 = go.Histogram(x=nonempty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#3A6CAC"}, name="Payload")
+        hist1 = go.Histogram(x=empty["remotewallclocktime"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#C21E29"}, name="Empty")
+        hist2 = go.Histogram(x=nonempty["remotewallclocktime"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#3A6CAC"}, name="Payload")
     else:
         # bins of minimum width 5 seconds
         bins = int(max_duration/5)
         # max 100 bins
         bins = min(bins, 100)
-        hist1 = go.Histogram(x=empty["duration"], nbinsx=bins, marker={"color":"#C21E29"}, name="Empty")
-        hist2 = go.Histogram(x=nonempty["duration"], nbinsx=bins, marker={"color":"#3A6CAC"}, name="Payload")
+        hist1 = go.Histogram(x=empty["remotewallclocktime"], nbinsx=bins, marker={"color":"#C21E29"}, name="Empty")
+        hist2 = go.Histogram(x=nonempty["remotewallclocktime"], nbinsx=bins, marker={"color":"#3A6CAC"}, name="Payload")
     
     layout = go.Layout(
         barmode="stack",
-        title="Duration distribution in past 4 hours{}".format(" (duration < 10m)" if ten_minutes else ""),
+        title="remotewallclocktime distribution in past 4 hours{}".format(" (duration < 10m)" if ten_minutes else ""),
         xaxis = go.XAxis(
-            title="Job duration (s)",
+            title="remotewallclocktime (s)",
             fixedrange=True,
             showgrid=True,
             gridcolor="darkgrey",
