@@ -183,15 +183,15 @@ def generate_distribution(queue_name, ten_minutes=False):
     nonempty = dataframe[dataframe["pandacount"]>0]
     
     if ten_minutes:
-        hist1 = go.Histogram(x=empty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#C21E29"})
-        hist2 = go.Histogram(x=nonempty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#3A6CAC"})
+        hist1 = go.Histogram(x=empty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#C21E29"}, name="Empty")
+        hist2 = go.Histogram(x=nonempty["duration"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#3A6CAC"}, name="Payload")
     else:
         # bins of minimum width 5 seconds
         bins = int(max_duration/5)
         # max 100 bins
         bins = min(bins, 100)
-        hist1 = go.Histogram(x=empty["duration"], nbinsx=bins, marker={"color":"#C21E29"})
-        hist2 = go.Histogram(x=nonempty["duration"], nbinsx=bins, marker={"color":"#3A6CAC"})
+        hist1 = go.Histogram(x=empty["duration"], nbinsx=bins, marker={"color":"#C21E29"}, name="Empty")
+        hist2 = go.Histogram(x=nonempty["duration"], nbinsx=bins, marker={"color":"#3A6CAC"}, name="Payload")
     
     layout = go.Layout(
         barmode="stack",
