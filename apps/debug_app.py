@@ -53,12 +53,29 @@ def debug_query_history():
     
     return html.Table(rows)
 
+def debug_dataframes():
+    column_names = ["Bucket", "Dataframe memory usage"]
+    
+    rows = [html.Tr([html.Td(n) for n in column_names])]
+    
+    for bucket, cache in Datasources.query_data.items():
+        rows.append(html.Tr([
+            html.Td(bucket),
+            html.Td(humanize.naturalsize(cache["data"].memory_usage(deep=True).sum())),
+        ]))
+    
+    return html.Table(rows)
+
 def generate_layout():
     layout = [
         html.Div([
             html.H4("Current data"),
             debug_table(),
-        ], style={"margin-bottom":"100px"}),
+        ], style={"margin-bottom":"50px"}),
+        html.Div([
+            html.H4("Cached dataframes"),
+            debug_dataframes(),
+        ], style={"margin-bottom":"50px"}),
         html.Div([
             html.H4("Query history"),
             debug_query_history(),
