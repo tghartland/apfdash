@@ -44,8 +44,8 @@ def generate_plot(grouping):
     for group in dataframe[grouping].unique():
         filtered_df = dataframe[dataframe[grouping] == group]
         traces.append(go.Scatter(
-            x=filtered_df["duration"],
-            y=filtered_df["remotewallclocktime"],
+            x=filtered_df["remotewallclocktime"],
+            y=filtered_df["remoteusercpu"],
             mode="markers",
             opacity=0.7,
             name=group,
@@ -56,8 +56,8 @@ def generate_plot(grouping):
         ))
 
     layout = go.Layout(
-        xaxis={"title": "Duration"},
-        yaxis={"title": "Remote wallclock time"},
+        xaxis={"title": "Remote wallclock time"},
+        yaxis={"title": "Remote user cpu time"},
         title="Events in past 4 hours ({})".format(groupings[grouping]),
         margin={
             "r":220,
