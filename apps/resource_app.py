@@ -23,7 +23,7 @@ groupings = {
     "gridresource": "Grid resource",
     "globaljobid": "Factory",
     "jobstatus": "Job status",
-    "pandacount": "Empty/Nonempty",
+    "pandacount": "Empty/Payload",
 }
 
 def generate_plot(grouping):
@@ -39,7 +39,7 @@ def generate_plot(grouping):
     traces = []
     
     if grouping == "pandacount":
-        dataframe["pandacount"] = dataframe["pandacount"].apply(lambda x: {0:"Empty"}.get(x, "Nonempty"))
+        dataframe["pandacount"] = dataframe["pandacount"].apply(lambda x: {0:"Empty"}.get(x, "Payload"))
     
     for group in dataframe[grouping].unique():
         filtered_df = dataframe[dataframe[grouping] == group]

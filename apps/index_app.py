@@ -92,7 +92,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     trace1 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
         x=dataframe["empty_jobs"][0:limit][::-1],
-        name="Empty jobs",
+        name="Empty",
         orientation="h",
         marker=dict(
             color="#C21E29",
@@ -102,7 +102,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     trace2 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
         x=dataframe["long_jobs"][0:limit][::-1],
-        name="Long jobs",
+        name="Payload",
         orientation="h",
         marker=dict(
             color="#3A6CAC",

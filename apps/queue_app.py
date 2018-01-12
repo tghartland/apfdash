@@ -20,7 +20,7 @@ def generate_plot_24h(queue_name):
     trace1 = go.Bar(
         x=filtered_df["job_time"],
         y=filtered_df["empty_jobs"],
-        name="Empty jobs",
+        name="Empty",
         marker=dict(
             color="#C21E29",
         ),
@@ -30,7 +30,7 @@ def generate_plot_24h(queue_name):
     trace2 = go.Bar(
         x=filtered_df["job_time"],
         y=filtered_df["long_jobs"],
-        name="Long jobs",
+        name="Payload",
         marker=dict(
             color="#3A6CAC",
         ),
@@ -109,7 +109,7 @@ def generate_plot_30d(queue_name):
     trace1 = go.Bar(
         x=filtered_df["job_date"],
         y=filtered_df["empty_jobs"],
-        name="Empty jobs",
+        name="Empty",
         marker=dict(
             color="#C21E29",
         ),
@@ -119,7 +119,7 @@ def generate_plot_30d(queue_name):
     trace2 = go.Bar(
         x=filtered_df["job_date"],
         y=filtered_df["long_jobs"],
-        name="Long jobs",
+        name="Payload",
         marker=dict(
             color="#3A6CAC",
         ),

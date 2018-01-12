@@ -18,7 +18,7 @@ def generate_plot(column):
     
     
     empty_hist = go.Histogram(x=empty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#C21E29"}, name="Empty")
-    nonempty_hist = go.Histogram(x=nonempty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#3A6CAC"}, name="Non-empty")
+    nonempty_hist = go.Histogram(x=nonempty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#3A6CAC"}, name="Payload")
 
     layout = go.Layout(
         barmode="stack",
