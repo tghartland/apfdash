@@ -114,7 +114,9 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         title="Queue comparison (30 days)",
         barmode="stack",
         margin=dict(
+            t=30,
             l=275,
+            b=40,
         ),
         xaxis = go.XAxis(
             title="Jobs",
@@ -123,7 +125,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         yaxis = go.YAxis(
             fixedrange=True,
         ),
-        height=int(180+270*min(limit, len(dataframe))/10),
+        height=int(70+27*min(limit, len(dataframe))),
     )
     return {
         "data": data,
