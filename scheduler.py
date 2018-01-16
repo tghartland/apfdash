@@ -1,7 +1,7 @@
 import time
 import threading
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 
 from aws import session
@@ -73,7 +73,8 @@ queries = [
 
 
 for query_id, bucket in queries:
-    scheduler.add_job(run_query, "interval", seconds=20*60, args=(query_id, bucket))
+    scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
+    scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=30), args=(query_id, bucket))
 
 scheduler.start()
 
