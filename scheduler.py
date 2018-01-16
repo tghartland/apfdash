@@ -72,9 +72,9 @@ queries = [
 
 
 
-for query_id, bucket in queries:
+for i, (query_id, bucket) in enumerate(queries):
     scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
-    scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=30), args=(query_id, bucket))
+    scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
 
 scheduler.start()
 
