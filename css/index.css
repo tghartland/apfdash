@@ -43,14 +43,15 @@ body {
     margin: 0px;
 }
 
-/*html, body, #react-entry-point, #_dash-app-content, #page-content {
-    height: 100%;
+
+
+/* reverse bootstrap making data table search hints bold*/
+input {
+    line-height: normal;
+    font: initial;
 }
 
-#react-entry-point > div {
-    height: 100%;
+/* reverse bootstrap removing all padding from debug page tables*/
+th, td {
+    padding: 12px 15px;
 }
-
-#_dash-app-content > div {
-    height: 100%;
-}*/

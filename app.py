@@ -32,16 +32,11 @@ app.scripts.append_script({"external_url": "/scripts/fix_datatable.js"})
 
 # dash example css and own css overrides
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-app.css.append_css({"external_url": "/css/index.css"})
 
 # custom bootstrap css/js with only panels enabled
 # from https://getbootstrap.com/docs/3.3/customize
-# with ONE TWEAK
-# the lines
-# td,
-# th {
-#   padding: 0;
-# }
-# are commented out to restore spacing in the debug page
 app.scripts.append_script({"external_url": "/scripts/bootstrap.js"})
 app.css.append_css({"external_url": "/css/bootstrap.css"})
+
+# my css is loaded last so that it has the final say on overriding things
+app.css.append_css({"external_url": "/css/index.css"})
