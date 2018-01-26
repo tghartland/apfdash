@@ -4,6 +4,8 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 
+import botocore
+
 from aws import session
 
 athena = session.client("athena")
@@ -21,15 +23,30 @@ class QueryHistory:
 def run_query(query_id, bucket, database="apfhistorypanda"):
     query = athena.get_named_query(NamedQueryId=query_id)
     
-    response = athena.start_query_execution(
-        QueryString=query["NamedQuery"]["QueryString"],
-        QueryExecutionContext={
-            "Database": database,
-        },
-        ResultConfiguration={
-            "OutputLocation": "s3://{}/".format(bucket),
-        }
-    )
+    try:
+        response = athena.start_query_execution(
+            QueryString=query["NamedQuery"]["QueryString"],
+            QueryExecutionContext={
+                "Database": database,
+            },
+            ResultConfiguration={
+                "OutputLocation": "s3://{}/".format(bucket),
+            }
+        )
+    except botocore.errorfactory.TooManyRequestsException:
+        QueryHistory.history.append(
+            QueryExecutionResult(
+                query["NamedQuery"]["Name"],
+                query_id,
+                "-",
+                datetime.now(tzutc()),
+                "TooManyRequestsException",
+                0,
+                0,
+            )
+        )
+        return
+    
     
     execution_id = response["QueryExecutionId"]
     
