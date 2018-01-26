@@ -132,10 +132,14 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         "layout": layout,
     }
 
+help_panel = [
+    html.P("The data table can be sorted and filtered."),
+    html.P("Queue names in the comparison plot are clickable links."),
+]
 
 def generate_layout():
-    layout = html.Div(
-        [
+    layout = [
+        html.Div([
             html.Div([
                 html.H4("Queue comparison", id="title"),
                 html.Div([
@@ -180,6 +184,7 @@ def generate_layout():
         #     "height":"100%",
         #     "display":"flex",
         # }
-    )
+        )
+    ]
     
-    return layout
+    return help_panel, layout

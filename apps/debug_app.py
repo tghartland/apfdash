@@ -66,6 +66,10 @@ def debug_dataframes():
     
     return html.Table(rows)
 
+help_panel = [
+    html.P("Keep an eye on that cost column."),
+]
+
 def generate_layout():
     layout = [
         html.Div([
@@ -81,4 +85,4 @@ def generate_layout():
             debug_query_history(),
         ]),
     ]
-    return layout
+    return help_panel, layout

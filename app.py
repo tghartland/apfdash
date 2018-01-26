@@ -19,10 +19,29 @@ def serve_script(resource):
 def serve_css(resource):
     return flask.send_from_directory(CSS_PATH, resource)
 
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-app.css.append_css({"external_url": "/css/index.css"})
+# jQuery
+app.scripts.append_script({"external_url": "https://code.jquery.com/jquery-3.2.1.slim.min.js"})
 
-app.scripts.append_script({"external_url": "https://code.jquery.com/jquery-3.2.1.min.js"})
+# for bootstrap
+#app.scripts.append_script({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
+
+# used for selecting elements in page as they are initialised
 app.scripts.append_script({"external_url": "https://rawgit.com/pie6k/jquery.initialize/master/jquery.initialize.min.js"})
 
 app.scripts.append_script({"external_url": "/scripts/fix_datatable.js"})
+
+# dash example css and own css overrides
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+app.css.append_css({"external_url": "/css/index.css"})
+
+# custom bootstrap css/js with only panels enabled
+# from https://getbootstrap.com/docs/3.3/customize
+# with ONE TWEAK
+# the lines
+# td,
+# th {
+#   padding: 0;
+# }
+# are commented out to restore spacing in the debug page
+app.scripts.append_script({"external_url": "/scripts/bootstrap.js"})
+app.css.append_css({"external_url": "/css/bootstrap.css"})

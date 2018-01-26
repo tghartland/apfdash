@@ -86,7 +86,9 @@ def generate_plot(grouping):
 def update_plot(grouping):
     return generate_plot(grouping)
     
-
+help_panel = [
+    html.P("Click the dropdown for other grouping options."),
+]
 
 def generate_layout():
     if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")) == 0:
@@ -123,4 +125,4 @@ def generate_layout():
         })
     ]
 
-    return layout
+    return help_panel, layout

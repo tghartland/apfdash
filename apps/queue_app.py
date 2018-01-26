@@ -228,6 +228,11 @@ def generate_distribution(queue_name, ten_minutes=False):
     return dcc.Graph(id="distribution-histogram-{}".format(["1", "2"][ten_minutes]), figure=fig, config={'displayModeBar': False})
 
 
+help_panel = [
+    html.P("Red = bad, blue = good."),
+]
+
+
 def generate_layout(queue_name):
     plot = generate_plot_24h(queue_name)
     if plot is None:
@@ -281,4 +286,4 @@ def generate_layout(queue_name):
         ],)
         
     ]
-    return layout
+    return help_panel, layout

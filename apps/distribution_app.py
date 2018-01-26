@@ -69,6 +69,10 @@ def generate_binned_plot():
 
     return dcc.Graph(id="distribution-plot-minutes", figure=figure, config={"displayModeBar": False})
 
+help_panel = [
+    html.P("10k minutes is 7 days."),
+]
+
 def generate_layout():
     if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")) == 0:
         return "No jobs in past 48 hours"
@@ -82,4 +86,4 @@ def generate_layout():
         })
     ]
 
-    return layout
+    return help_panel, layout

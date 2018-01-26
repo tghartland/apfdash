@@ -42,3 +42,8 @@ $.initialize("text a", function() {
 $.initialize(".react-grid-HeaderCell div div input:eq(1)", function() {
     $(this)[0].setAttribute("placeholder", "Search (e.g >5000)");
 });
+
+$.initialize("#help-panel-collapsing-link", function() {
+    $(this)[0].setAttribute("data-toggle", "collapse");
+    $(this)[0].setAttribute("href", "#collapsehelp")
+});
