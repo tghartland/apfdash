@@ -41,8 +41,8 @@ def generate_binned_plot():
     dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-binned-48h")
     # dataframe["total_jobs"]-dataframe["empty_jobs"]
 
-    empty_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, offset=0.5)
-    payload_hist = go.Bar(x=dataframe["minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, offset=0.5)
+    empty_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=1)
+    payload_hist = go.Bar(x=dataframe["minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=1)
 
     data = [empty_hist, payload_hist]
 
