@@ -14,16 +14,14 @@ $.initialize("div._dash-undo-redo", function() {
 });
 
 // Make the queue names in the datatable into links.
-// The first check is to select cells only from
-// the leftmost column.
-$.initialize("div.react-grid-Cell .react-grid-Cell__value div span div", function() {
-    if ($(this)[0].parentElement.parentElement.parentElement.parentElement.style.left == "0px") {
-        $(this)[0].onclick = function () {
-            window.history.pushState({}, '', "/queue/" + $(this)[0].title);
-            window.dispatchEvent(new Event('onpushstate'));
-            return false;
-        };
-    }
+// style*='left: 0px' selects only the reacts grid cells
+// that are in the leftmost column (queue names).
+$.initialize("div.react-grid-Cell[style*='left: 0px'] .react-grid-Cell__value div span div", function() {
+    $(this)[0].onclick = function () {
+        window.history.pushState({}, '', "/queue/" + $(this)[0].title);
+        window.dispatchEvent(new Event('onpushstate'));
+        return false;
+    };
 });
 
 // Overwrite bar chart label links' click handlers.
