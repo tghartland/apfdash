@@ -62,9 +62,9 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
 # new queries using apfhistorypanda database
 queries = [
     # query id                                bucket                                          query name                    description
-    ("9c6c3a70-b9e5-40c4-bbe1-ad776d820760", "aws-athena-query-results-lancs-30d"),         # pnd_dur_30d                   jobs/duration data over 30 days
-    ("af8f85f3-ec5e-4513-89f3-d9bcdf9af29f", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
-    ("73ddc08f-79ae-4502-a440-aa97ba73a10c", "aws-athena-query-results-lancs-history-30d"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
+    ("d9070f40-ba13-453e-a4be-43cf67fa083d", "aws-athena-query-results-lancs-30d"),         # pnd_dur_30d                   jobs/duration data over 30 days
+    ("d2ee5403-6772-4cc7-b446-d4cab42ca8c4", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
+    ("0865d653-ab36-42a0-8c7a-1e5f6a983e40", "aws-athena-query-results-lancs-history-30d"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
     ("efab784b-a182-4acf-80bf-b6e7ddaa3e79", "aws-athena-query-results-lancs-4h"),          # pnd_all_4h                    all columns for jobs in past 4 hours
     #("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours
     ("6a33eb91-d745-4a99-bbfa-7d19d522eaee", "aws-athena-query-results-lancs-all-48h"),     # pnd_wc_pandacount_48h         all wallclock, pandacount for wc<1200 past 48 hours
