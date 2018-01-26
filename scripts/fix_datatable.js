@@ -37,3 +37,10 @@ $.initialize("text a", function() {
         return false;
     };
 });
+
+
+// Add examples to data table's search box
+// :eq(1) selects only the second search box
+$.initialize(".react-grid-HeaderCell div div input:eq(1)", function() {
+    $(this)[0].setAttribute("placeholder", "Search (e.g >5000)");
+});
