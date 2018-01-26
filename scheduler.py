@@ -68,8 +68,8 @@ queries = [
     ("efab784b-a182-4acf-80bf-b6e7ddaa3e79", "aws-athena-query-results-lancs-4h"),          # pnd_all_4h                    all columns for jobs in past 4 hours
     #("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours
     ("6a33eb91-d745-4a99-bbfa-7d19d522eaee", "aws-athena-query-results-lancs-all-48h"),     # pnd_wc_pandacount_48h         all wallclock, pandacount for wc<1200 past 48 hours
+    ("c15475b6-a226-494a-abf3-a2b8862c5416", "aws-athena-query-results-lancs-binned-48h"),  # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
 ]
-
 
 
 for i, (query_id, bucket) in enumerate(queries):

@@ -37,6 +37,37 @@ def generate_plot(column):
 
     return dcc.Graph(id="distribution-plot-{}".format(column), figure=figure, config={'displayModeBar': False})
 
+def generate_binned_plot():
+    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-binned-48h")
+    # dataframe["total_jobs"]-dataframe["empty_jobs"]
+
+    empty_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, offset=0.5)
+    payload_hist = go.Bar(x=dataframe["minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, offset=0.5)
+
+    data = [empty_hist, payload_hist]
+
+    layout = go.Layout(
+        title="Wallclock time binned by minutes",
+        barmode="stack",
+        xaxis=go.XAxis(
+            title="Minutes",
+            showgrid=False,
+        ),
+        yaxis=go.YAxis(
+            title="Jobs",
+            showgrid=True,
+            #autorange=False,
+            #range=[0, 100],
+            type="log",
+        )
+    )
+
+    figure = {
+        "data": data,
+        "layout": layout,
+    }
+
+    return dcc.Graph(id="distribution-plot-minutes", figure=figure, config={"displayModeBar": False})
 
 def generate_layout():
     if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")) == 0:
@@ -45,6 +76,7 @@ def generate_layout():
         html.Div([
             #generate_plot("duration"),
             generate_plot("remotewallclocktime"),
+            generate_binned_plot(),
         ],
         style={
         })
