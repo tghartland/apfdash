@@ -79,7 +79,8 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
 queries = [
     # query id                                bucket                                          query name                    description
     ("d9070f40-ba13-453e-a4be-43cf67fa083d", "aws-athena-query-results-lancs-30d"),         # pnd_dur_30d                   jobs/duration data over 30 days
-    ("d2ee5403-6772-4cc7-b446-d4cab42ca8c4", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
+    #("d2ee5403-6772-4cc7-b446-d4cab42ca8c4", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
+    ("a3052d5c-77cb-44f7-8b71-d17470a33e36", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
     ("0865d653-ab36-42a0-8c7a-1e5f6a983e40", "aws-athena-query-results-lancs-history-30d"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
     ("efab784b-a182-4acf-80bf-b6e7ddaa3e79", "aws-athena-query-results-lancs-4h"),          # pnd_all_4h                    all columns for jobs in past 4 hours
     #("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours

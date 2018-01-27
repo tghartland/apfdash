@@ -39,11 +39,14 @@ def generate_plot_24h(queue_name):
     
     data = [trace1, trace2]
     
-    min_time = df["job_time"].min()
-    max_time = df["job_time"].max()
+    min_time = datetime.strptime(df["job_time"].min(), "%Y-%m-%d %H:%M:%S.%f")
+    max_time = datetime.strptime(df["job_time"].max(), "%Y-%m-%d %H:%M:%S.%f")+timedelta(hours=1)
+    # add one hour to max_time so that bar for current hour is not excluded
+    
+    print(min_time, max_time)
     
     layout = go.Layout(
-        title="24 hours",
+        title="48 hours history",
         barmode="stack",
         xaxis = go.XAxis(
             title="Time",
@@ -131,7 +134,7 @@ def generate_plot_30d(queue_name):
     
     
     layout = go.Layout(
-        title="30 days",
+        title="30 days history",
         barmode="stack",
         xaxis = go.XAxis(
             title="Date",
