@@ -4,7 +4,6 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 
-import botocore
 
 from aws import session
 
@@ -33,7 +32,7 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
                 "OutputLocation": "s3://{}/".format(bucket),
             }
         )
-    except botocore.errorfactory.TooManyRequestsException:
+    except athena.exceptions.TooManyRequestsException:
         QueryHistory.history.append(
             QueryExecutionResult(
                 query["NamedQuery"]["Name"],
