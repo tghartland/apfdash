@@ -227,6 +227,89 @@ def generate_distribution(queue_name, ten_minutes=False):
     
     return dcc.Graph(id="distribution-histogram-{}".format(["1", "2"][ten_minutes]), figure=fig, config={'displayModeBar': False})
 
+def generate_distribution_prebinned(queue_name):
+    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-queue-binned-48h")
+    dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
+    
+    empty_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=10, offset=0)
+    payload_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=10, offset=0)
+
+    data = [empty_bar, payload_bar]
+
+    layout = go.Layout(
+        title="Wallclock time (<600s) binned per 10 seconds (past 48h)",
+        barmode="stack",
+        xaxis=go.XAxis(
+            title="remotewallclocktime (seconds)",
+            showgrid=True,
+            gridcolor="darkgrey",
+            fixedrange=True,
+            autorange=False,
+            range=(0, 600)
+        ),
+        yaxis=go.YAxis(
+            title="Jobs",
+            showgrid=True,
+            gridcolor="darkgrey",
+            #autorange=False,
+            #range=[0, 100],
+            type="log",
+            fixedrange=True,
+        ),
+        margin=go.Margin(
+            l=55,
+            r=45,
+            b=50,
+            t=30,
+            pad=4
+        ),
+    )
+
+    figure = {
+        "data": data,
+        "layout": layout,
+    }
+
+    return dcc.Graph(id="distribution-histogram-10mins", figure=figure, config={"displayModeBar": False})
+
+def generate_distribution_prebinned_10m(queue_name):
+    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-queue-binned10m-48h")
+    dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
+    
+    empty_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=10, offset=0)
+    payload_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=10, offset=0)
+    data = [empty_bar, payload_bar]
+
+    layout = go.Layout(
+        title="Wallclock time in minutes binned per 10 minutes (past 48h)",
+        barmode="stack",
+        xaxis=go.XAxis(
+            title="remotewallclocktime (minutes)",
+            showgrid=True,
+            gridcolor="darkgrey",
+        ),
+        yaxis=go.YAxis(
+            title="Jobs",
+            showgrid=True,
+            gridcolor="darkgrey",
+            type="log",
+        ),
+        margin=go.Margin(
+            l=55,
+            r=45,
+            b=50,
+            t=30,
+            pad=4
+        ),
+    )
+
+    figure = {
+        "data": data,
+        "layout": layout,
+    }
+
+    return dcc.Graph(id="distribution-histogram-all10m", figure=figure, config={"displayModeBar": False})
+
 
 help_panel = [
     html.P("Red = bad, blue = good."),
@@ -268,7 +351,7 @@ def generate_layout(queue_name):
         
         html.Div([
             html.Div([
-                generate_distribution(queue_name),
+                generate_distribution_prebinned_10m(queue_name),
             ],
             style={
                 "width":"50%",
@@ -276,7 +359,8 @@ def generate_layout(queue_name):
             }),
 
             html.Div([
-                generate_distribution(queue_name, ten_minutes=True),
+                #generate_distribution(queue_name, ten_minutes=True),
+                generate_distribution_prebinned(queue_name),
             ],
             style={
                 "width":"50%",

@@ -85,6 +85,8 @@ queries = [
     #("80545946-0d70-4589-8c7d-dc2eb31a80ed", "aws-athena-query-results-lancs-all-48h"),     # pnd_q_dur_wc_pandacount_48h   all queue, duration, wallclock, pandacount for past 48 hours
     ("6a33eb91-d745-4a99-bbfa-7d19d522eaee", "aws-athena-query-results-lancs-all-48h"),     # pnd_wc_pandacount_48h         all wallclock, pandacount for wc<1200 past 48 hours
     ("c15475b6-a226-494a-abf3-a2b8862c5416", "aws-athena-query-results-lancs-binned-48h"),  # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
+    ("d99ddd95-c0a1-4879-8f88-68a35b446158", "aws-athena-query-results-lancs-queue-binned-48h"),    # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
+    ("2cc20e2f-93dd-4f3e-9ff0-542483663df9", "aws-athena-query-results-lancs-queue-binned10m-48h"), # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
 ]
 
 
@@ -93,7 +95,6 @@ for i, (query_id, bucket) in enumerate(queries):
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
 
 scheduler.start()
-
 
 
 def update_now(threaded=False):
