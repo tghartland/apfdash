@@ -9,6 +9,8 @@ CSS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'css')
 app = dash.Dash()
 server = app.server
 app.config.suppress_callback_exceptions = True
+# app.config.requests_pathname_prefix = "/dash5"
+# app.config.requests_pathname_prefix = "/dash/" # set when deploying
 # app.scripts.config.serve_locally = True
 
 @app.server.route('/scripts/<resource>')
