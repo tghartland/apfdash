@@ -42,10 +42,21 @@ def generate_table(search_term, dataframe, max_rows=10):
 
 def generate_datatable():
     dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d")
-    dataframe["empty_percentage"] = (100*dataframe["empty_jobs"]/dataframe["total_jobs"]).round(2)
+    dataframe["empty_pcent"] = (100*dataframe["empty_jobs"]/dataframe["total_jobs"]).round(2)
+    dataframe["emptywc_pcent"] = (100*dataframe["remotewallclocktime_empty"]/dataframe["remotewallclocktime"]).round(2)
     
-    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty_percentage"]]
     
+    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty_pcent", "remotewallclocktime", "remotewallclocktime_empty", "emptywc_pcent"]]
+    #dataframe.set_index(["Queue", "Jobs", "Empty jobs", "% Empty", "Wallclock", "Wallclock (empty)", "Wallclock (% empty)"])
+    dataframe = dataframe.rename(columns={
+        "match_apf_queue": "Queue",
+        "total_jobs": "Jobs",
+        "empty_jobs": "Jobs (empty)",
+        "empty_pcent": "% Empty",
+        "remotewallclocktime": "Wallclock time",
+        "remotewallclocktime_empty": "Wallclock (empty)",
+        "emptywc_pcent": "Wallclock (% empty)",
+    })
     # records = dataframe.to_dict("records")
     # for i, record in enumerate(records):
     #     record["match_apf_queue"] = dcc.Link(record["match_apf_queue"], href="/queue/{}".format(record["match_apf_queue"]))
@@ -60,7 +71,7 @@ def generate_datatable():
         sortable=True,
         editable=False,
         id="queue-datatable",
-        min_height="800px",
+        min_height=800,
     )
     
     return table
@@ -71,7 +82,7 @@ def generate_datatable():
      Input("num-queues-dropdown", "value")],
 )
 def update_plot(rows, limit):
-    selected_rows = [row["match_apf_queue"] for row in rows]
+    selected_rows = [row["Queue"] for row in rows]
     return generate_plot(Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"),
         filtered_by=selected_rows, limit=limit)
 
@@ -111,7 +122,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     
     data = [trace1, trace2]
     layout = go.Layout(
-        title="Queue comparison (30 days)",
+        title="Queue comparison (past 24 hours)",
         barmode="stack",
         margin=dict(
             t=30,

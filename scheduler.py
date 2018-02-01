@@ -78,7 +78,8 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
 # new queries using apfhistorypanda database
 queries = [
     # query id                                bucket                                          query name                    description
-    ("d9070f40-ba13-453e-a4be-43cf67fa083d", "aws-athena-query-results-lancs-30d"),         # pnd_dur_30d                   jobs/duration data over 30 days
+    #("d9070f40-ba13-453e-a4be-43cf67fa083d", "aws-athena-query-results-lancs-30d"),         # pnd_dur_30d                   jobs/duration data over 30 days
+    ("e0fa8b88-5718-4b02-acfe-b184786c7808", "aws-athena-query-results-lancs-30d"),         # pnd_index_24h                 Aggregate data in past 24 hours
     #("d2ee5403-6772-4cc7-b446-d4cab42ca8c4", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_24h           hourly jobs data over past 24 hours
     ("a3052d5c-77cb-44f7-8b71-d17470a33e36", "aws-athena-query-results-lancs-24h"),         # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
     ("0865d653-ab36-42a0-8c7a-1e5f6a983e40", "aws-athena-query-results-lancs-history-30d"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
@@ -94,6 +95,7 @@ queries = [
 for i, (query_id, bucket) in enumerate(queries):
     scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
+    scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15+i*5), args=(bucket,))
 
 scheduler.start()
 
