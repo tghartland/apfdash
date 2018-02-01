@@ -41,8 +41,8 @@ class Datasources:
                 return Datasources.query_data[bucket_name]["data"].copy()
                 
         name, date = most_recent_object_in_bucket(bucket_name)
-        Datasources.query_data[bucket_name] = Datasources.query_data.get(bucket_name, {"modified": datetime(1, 1, 1, tzinfo=tzutc())})
-        if date > Datasources.query_data[bucket_name]["modified"]:
+        query_result = Datasources.query_data.get(bucket_name, {"modified": datetime(1, 1, 1, tzinfo=tzutc())})
+        if date > query_result["modified"]:
             file_data = io.BytesIO()
             s3.download_fileobj(bucket_name, name, file_data)
             file_data.seek(0)
@@ -50,10 +50,13 @@ class Datasources:
             string_data = str(bytes_data, "utf8")
             string_file = io.StringIO(string_data)
             string_file.seek(0)
-            Datasources.query_data[bucket_name]["data"] = pd.read_csv(string_file)
-            Datasources.query_data[bucket_name]["filename"] = name
-            Datasources.query_data[bucket_name]["modified"] = date
-            Datasources.query_data[bucket_name]["downloaded"] = datetime.now(tzutc())
+            query_result["data"] = pd.read_csv(string_file)
+            query_result["filename"] = name
+            query_result["modified"] = date
+            query_result["downloaded"] = datetime.now(tzutc())
         
-        Datasources.query_data[bucket_name]["checked_for_update"] = datetime.now(tzutc())
+        query_result["checked_for_update"] = datetime.now(tzutc())
+        Datasources.query_data[bucket_name] = query_result
+        
+        
         return Datasources.query_data[bucket_name]["data"].copy()
