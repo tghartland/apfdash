@@ -53,7 +53,7 @@ def generate_datatable():
         "total_jobs": "Jobs",
         "empty_jobs": "Jobs (empty)",
         "empty_pcent": "% Empty",
-        "remotewallclocktime": "Wallclock time",
+        "remotewallclocktime": "Wallclock (total)",
         "remotewallclocktime_empty": "Wallclock (empty)",
         "emptywc_pcent": "Wallclock (% empty)",
     })
