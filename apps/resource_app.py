@@ -29,7 +29,7 @@ groupings = {
 def generate_plot(grouping):
     if grouping is None:
         return {}
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-scatter")
     if len(dataframe) == 0:
         return {}
     dataframe = dataframe.sample(frac=0.25, random_state=0)
@@ -91,7 +91,7 @@ help_panel = [
 ]
 
 def generate_layout():
-    if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")) == 0:
+    if len(Datasources.get_latest_data_for("aws-athena-apfdash-scatter")) == 0:
         return "No jobs in past 4 hours"
     layout = [
         html.Div([

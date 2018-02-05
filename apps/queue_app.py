@@ -12,7 +12,7 @@ import pandas as pd
 from datasources import Datasources
 
 def generate_plot_24h(queue_name):
-    df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-24h")
+    df = Datasources.get_latest_data_for("aws-athena-apfdash-queue-history")
     filtered_df = df[df["match_apf_queue"] == queue_name]
     
     filtered_df.insert(4, "long_jobs", filtered_df["total_jobs"]-filtered_df["empty_jobs"])
@@ -80,7 +80,7 @@ def generate_plot_24h(queue_name):
 
 
 def generate_plot_30d(queue_name):
-    df = Datasources.get_latest_data_for("aws-athena-query-results-lancs-history-30d")
+    df = Datasources.get_latest_data_for("aws-athena-apfdash-queue-history-30d")
     df["job_date"] = df["job_date"].apply(lambda d: datetime.date(datetime.strptime(d, "%Y-%m-%d")))
     filtered_df = df[df["match_apf_queue"] == queue_name]
     
@@ -168,7 +168,7 @@ def generate_plot_30d(queue_name):
 
 
 def generate_distribution(queue_name, ten_minutes=False):
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-4h")
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-scatter")
     dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
     
     if len(dataframe) == 0:
@@ -231,7 +231,7 @@ def generate_distribution(queue_name, ten_minutes=False):
     return dcc.Graph(id="distribution-histogram-{}".format(["1", "2"][ten_minutes]), figure=fig, config={'displayModeBar': False})
 
 def generate_distribution_prebinned(queue_name):
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-queue-binned-48h")
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-queue-binned1s")
     dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
     
     empty_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=10, offset=0)
@@ -276,7 +276,7 @@ def generate_distribution_prebinned(queue_name):
     return dcc.Graph(id="distribution-histogram-10mins", figure=figure, config={"displayModeBar": False})
 
 def generate_distribution_prebinned_10m(queue_name):
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-queue-binned10m-48h")
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-queue-binned10m")
     dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
     
     empty_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=10, offset=0)

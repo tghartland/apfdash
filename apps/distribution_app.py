@@ -3,42 +3,43 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-from app import app
-
 from datasources import Datasources
 
 
-def generate_plot(column):
-    duration_limit = 1200
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")
-    dataframe = dataframe[dataframe[column] <= duration_limit]
-    
-    empty = dataframe[dataframe["pandacount"]==0]
-    nonempty = dataframe[dataframe["pandacount"]>0]
-    
-    
-    empty_hist = go.Histogram(x=empty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#C21E29"}, name="Empty")
-    nonempty_hist = go.Histogram(x=nonempty[column], xbins={"start":-0.5, "end":duration_limit-0.5, "size":1}, marker={"color":"#3A6CAC"}, name="Payload")
+def generate_binned_plot_1s():
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-dist-binned1s")
+    # dataframe["total_jobs"]-dataframe["empty_jobs"]
+
+    empty_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=1)
+    payload_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=1)
+
+    data = [empty_hist, payload_hist]
 
     layout = go.Layout(
+        title="Wallclock time (<1200s) distribution of jobs in past 48 hours",
         barmode="stack",
-        xaxis={"title": column},
-        yaxis={"title": "Num jobs", "type":"log"},
-        title="{} distribution of all jobs in past 48 hours".format(column),
-        margin={
-            "t":50,
-        }
+        xaxis=go.XAxis(
+            title="remotewallclocktime (seconds)",
+            showgrid=False,
+        ),
+        yaxis=go.YAxis(
+            title="Jobs",
+            showgrid=True,
+            #autorange=False,
+            #range=[0, 100],
+            type="log",
+        )
     )
 
     figure = {
-        "data": [empty_hist, nonempty_hist],
+        "data": data,
         "layout": layout,
     }
 
-    return dcc.Graph(id="distribution-plot-{}".format(column), figure=figure, config={'displayModeBar': False})
+    return dcc.Graph(id="distribution-plot-seconds", figure=figure, config={"displayModeBar": False})
 
-def generate_binned_plot():
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-binned-48h")
+def generate_binned_plot_10m():
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-dist-binned1m")
     # dataframe["total_jobs"]-dataframe["empty_jobs"]
 
     empty_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=1)
@@ -47,7 +48,7 @@ def generate_binned_plot():
     data = [empty_hist, payload_hist]
 
     layout = go.Layout(
-        title="Wallclock time binned by minutes",
+        title="Wallclock time binned by minutes of all jobs in past 48 hours",
         barmode="stack",
         xaxis=go.XAxis(
             title="Minutes",
@@ -74,13 +75,14 @@ help_panel = [
 ]
 
 def generate_layout():
-    if len(Datasources.get_latest_data_for("aws-athena-query-results-lancs-all-48h")) == 0:
+    if len(Datasources.get_latest_data_for("aws-athena-apfdash-dist-binned1s")) == 0:
         return "No jobs in past 48 hours"
     layout = [
         html.Div([
             #generate_plot("duration"),
-            generate_plot("remotewallclocktime"),
-            generate_binned_plot(),
+            #generate_plot("remotewallclocktime"),
+            generate_binned_plot_1s(),
+            generate_binned_plot_10m(),
         ],
         style={
         })

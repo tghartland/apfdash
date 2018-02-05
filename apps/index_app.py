@@ -41,17 +41,19 @@ def generate_table(search_term, dataframe, max_rows=10):
 
 
 def generate_datatable():
-    dataframe = Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d")
+    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-index")
     dataframe["empty_pcent"] = (100*dataframe["empty_jobs"]/dataframe["total_jobs"]).round(2)
     dataframe["emptywc_pcent"] = (100*dataframe["remotewallclocktime_empty"]/dataframe["remotewallclocktime"]).round(2)
     
     
-    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty_pcent", "remotewallclocktime", "remotewallclocktime_empty", "emptywc_pcent"]]
+    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty3_jobs", "empty4_jobs", "empty_pcent", "remotewallclocktime", "remotewallclocktime_empty", "emptywc_pcent"]]
     #dataframe.set_index(["Queue", "Jobs", "Empty jobs", "% Empty", "Wallclock", "Wallclock (empty)", "Wallclock (% empty)"])
     dataframe = dataframe.rename(columns={
         "match_apf_queue": "Queue",
         "total_jobs": "Jobs",
         "empty_jobs": "Jobs (empty)",
+        "empty3_jobs": "Jobs (empty 3)",
+        "empty4_jobs": "Jobs (empty 4)",
         "empty_pcent": "% Empty",
         "remotewallclocktime": "Wallclock (total)",
         "remotewallclocktime_empty": "Wallclock (empty)",
@@ -83,7 +85,7 @@ def generate_datatable():
 )
 def update_plot(rows, limit):
     selected_rows = [row["Queue"] for row in rows]
-    return generate_plot(Datasources.get_latest_data_for("aws-athena-query-results-lancs-30d"),
+    return generate_plot(Datasources.get_latest_data_for("aws-athena-apfdash-index"),
         filtered_by=selected_rows, limit=limit)
 
 
@@ -102,8 +104,8 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     
     trace1 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
-        x=dataframe["empty_jobs"][0:limit][::-1],
-        name="Empty",
+        x=dataframe["empty4_jobs"][0:limit][::-1],
+        name="Empty (4)",
         orientation="h",
         marker=dict(
             color="#C21E29",
@@ -111,6 +113,16 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     )
     
     trace2 = go.Bar(
+        y=dataframe["match_apf_queue"][0:limit][::-1],
+        x=dataframe["empty3_jobs"][0:limit][::-1],
+        name="Empty (3)",
+        orientation="h",
+        marker=dict(
+            color="#EF751A",
+        ),
+    )
+    
+    trace3 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
         x=dataframe["long_jobs"][0:limit][::-1],
         name="Payload",
@@ -120,7 +132,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         ),
     )
     
-    data = [trace1, trace2]
+    data = [trace1, trace2, trace3]
     layout = go.Layout(
         title="Queue comparison (past 24 hours)",
         barmode="stack",
