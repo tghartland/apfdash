@@ -46,7 +46,7 @@ def debug_query_history():
     
     rows = [html.Tr([html.Td(n) for n in column_names])]
     
-    for event in list(reversed(QueryHistory.history))[0:30]:
+    for event in list(reversed(QueryHistory.history)):
         rows.append(html.Tr(
             [html.Td(x) for x in format_row(event)]
             )

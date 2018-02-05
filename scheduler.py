@@ -69,6 +69,9 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
             execution["QueryExecution"]["Statistics"]["EngineExecutionTimeInMillis"],
         )
     )
+    
+    if len(QueryHistory.history) > 30:
+        QueryHistory.history = list(reversed(reversed(QueryHistory.history)[:30]))
 
 
 
