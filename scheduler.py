@@ -41,6 +41,8 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
                 0,
             )
         )
+        if len(QueryHistory.history) > 30:
+            QueryHistory.history.pop(0)
         return
     
     
