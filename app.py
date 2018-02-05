@@ -1,4 +1,6 @@
+import os
 import os.path
+import urllib.parse
 
 import dash
 import flask
@@ -6,18 +8,28 @@ import flask
 SCRIPT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scripts')
 CSS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'css')
 
-app = dash.Dash()
+URL_PREFIX = os.environ.get("APFDASH_URL_PREFIX", "/")
+if not URL_PREFIX.endswith("/"):
+    URL_PREFIX = URL_PREFIX + "/"
+
+def prefixed_url(url):
+    if url.startswith("/"):
+        # if url is intended to be prefixed, it should not start with a "/" anyway
+        # and is likely a mistake
+        url = url[1:]
+    return urllib.parse.urljoin(URL_PREFIX, url)
+
+app = dash.Dash(url_base_pathname=URL_PREFIX)
 server = app.server
 app.config.suppress_callback_exceptions = True
-# app.config.requests_pathname_prefix = "/dash5"
-# app.config.requests_pathname_prefix = "/dash/" # set when deploying
+app.config.requests_pathname_prefix = URL_PREFIX
 # app.scripts.config.serve_locally = True
 
-@app.server.route('/scripts/<resource>')
+@app.server.route(prefixed_url("scripts/<resource>"))
 def serve_script(resource):
     return flask.send_from_directory(SCRIPT_PATH, resource)
 
-@app.server.route('/css/<resource>')
+@app.server.route(prefixed_url("css/<resource>"))
 def serve_css(resource):
     return flask.send_from_directory(CSS_PATH, resource)
 
@@ -30,15 +42,15 @@ app.scripts.append_script({"external_url": "https://code.jquery.com/jquery-3.2.1
 # used for selecting elements in page as they are initialised
 app.scripts.append_script({"external_url": "https://rawgit.com/pie6k/jquery.initialize/master/jquery.initialize.min.js"})
 
-app.scripts.append_script({"external_url": "/scripts/fix_datatable.js"})
+app.scripts.append_script({"external_url": prefixed_url("scripts/fix_datatable.js")})
 
 # dash example css and own css overrides
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 
 # custom bootstrap css/js with only panels enabled
 # from https://getbootstrap.com/docs/3.3/customize
-app.scripts.append_script({"external_url": "/scripts/bootstrap.js"})
-app.css.append_css({"external_url": "/css/bootstrap.css"})
+app.scripts.append_script({"external_url": prefixed_url("scripts/bootstrap.js")})
+app.css.append_css({"external_url": prefixed_url("css/bootstrap.css")})
 
 # my css is loaded last so that it has the final say on overriding things
-app.css.append_css({"external_url": "/css/index.css"})
+app.css.append_css({"external_url": prefixed_url("css/index.css")})

@@ -6,17 +6,7 @@ import dash_table_experiments as dt
 from werkzeug.routing import Map, Rule
 from werkzeug.routing import NotFound, RequestRedirect
 
-routing_map = Map([
-    Rule("/", endpoint="index"),
-    Rule("/queue/<string:queue_name>/", endpoint="queue"),
-    Rule("/resource/", endpoint="resource"),
-    Rule("/distribution/", endpoint="distribution"),
-    Rule("/debug/", endpoint="debug"),
-])
-
-routes = routing_map.bind("")
-
-from app import app
+from app import app, prefixed_url
 from apps import index_app
 from apps import queue_app
 from apps import resource_app
@@ -24,6 +14,16 @@ from apps import debug_app
 from apps import distribution_app
 
 server = app.server
+
+routing_map = Map([
+    Rule(prefixed_url(""), endpoint="index"),
+    Rule(prefixed_url("queue/<string:queue_name>/"), endpoint="queue"),
+    Rule(prefixed_url("resource/"), endpoint="resource"),
+    Rule(prefixed_url("distribution/"), endpoint="distribution"),
+    Rule(prefixed_url("debug/"), endpoint="debug"),
+])
+
+routes = routing_map.bind("")
 
 app.layout = html.Div([
     # Stores url
@@ -35,10 +35,10 @@ app.layout = html.Div([
     
     # Header bar
     html.Div([
-        dcc.Link("Index", href="/", style={"margin":"5px"}),
-        dcc.Link("Resource", href="/resource/", style={"margin":"5px"}),
-        dcc.Link("Distribution", href="/distribution/", style={"margin":"5px"}),
-        dcc.Link("Debug", href="/debug/", style={"margin":"5px"}),
+        dcc.Link("Index", href=prefixed_url(""), style={"margin":"5px"}),
+        dcc.Link("Resource", href=prefixed_url("resource/"), style={"margin":"5px"}),
+        dcc.Link("Distribution", href=prefixed_url("distribution/"), style={"margin":"5px"}),
+        dcc.Link("Debug", href=prefixed_url("debug/"), style={"margin":"5px"}),
         html.Hr(style={"margin": "0px", "margin-top": "2px", "margin-bottom":"10px"}),
     ], style={"width": "100%"}),
     
