@@ -1,12 +1,12 @@
 # APF Dashboard
 
-#### Run
+### Run
 
 `python index.py`
 
 Requires Python 3.
 
-#### Environment Variables
+### Environment Variables
 
 | Variable | Description |
 | --- | --- |
