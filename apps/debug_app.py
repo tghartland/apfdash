@@ -14,7 +14,7 @@ from scheduler import QueryHistory
 
 
 def debug_table():
-    column_names = ["Bucket", "Latest object", "Object modified", "Downloaded", "Checked for update"]
+    column_names = ["Bucket", "Latest object", "Object modified", "Downloaded", "Checked for update", "Dataframe memory usage"]
 
     rows = [html.Tr([html.Td(n) for n in column_names])]
     
@@ -25,6 +25,7 @@ def debug_table():
             html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["modified"])),
             html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["downloaded"])),
             html.Td(humanize.naturaltime(datetime.now(tzutc())-obj["checked_for_update"])),
+            html.Td(humanize.naturalsize(obj["data"].memory_usage(deep=True).sum())),
         ]))
 
     return html.Table(rows)
@@ -76,10 +77,10 @@ def generate_layout():
             html.H4("Current data"),
             debug_table(),
         ], style={"margin-bottom":"50px"}),
-        html.Div([
-            html.H4("Cached dataframes"),
-            debug_dataframes(),
-        ], style={"margin-bottom":"50px"}),
+        # html.Div([
+        #     html.H4("Cached dataframes"),
+        #     debug_dataframes(),
+        # ], style={"margin-bottom":"50px"}),
         html.Div([
             html.H4("Query history"),
             debug_query_history(),
