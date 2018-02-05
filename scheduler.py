@@ -70,8 +70,9 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
         )
     )
     
+    # Don't want to keep all history, just the most recent. 30 is enough to keep.
     if len(QueryHistory.history) > 30:
-        QueryHistory.history = list(reversed(reversed(QueryHistory.history)[:30]))
+        QueryHistory.history.pop(0)
 
 
 
