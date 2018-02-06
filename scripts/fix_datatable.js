@@ -18,7 +18,7 @@ $.initialize("div._dash-undo-redo", function() {
 // that are in the leftmost column (queue names).
 $.initialize("div.react-grid-Cell[style*='left: 0px'] .react-grid-Cell__value div span div", function() {
     $(this)[0].onclick = function () {
-        window.history.pushState({}, '', "/queue/" + $(this)[0].title);
+        window.history.pushState({}, '', URL_PREFIX + "queue/" + $(this)[0].title);
         window.dispatchEvent(new Event('onpushstate'));
         return false;
     };

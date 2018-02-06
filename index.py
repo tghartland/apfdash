@@ -6,7 +6,7 @@ import dash_table_experiments as dt
 from werkzeug.routing import Map, Rule
 from werkzeug.routing import NotFound, RequestRedirect
 
-from app import app, prefixed_url
+from app import app, prefixed_url, URL_PREFIX
 from apps import index_app
 from apps import queue_app
 from apps import resource_app
@@ -32,6 +32,8 @@ app.layout = html.Div([
     # Hidden data table to force it to send the data table js components
     # https://github.com/plotly/dash-table-experiments/issues/18
     html.Div(dt.DataTable(rows=[{}]), style={"display": "none"}),
+
+    html.Script("var URL_PREFIX = \"{}\"".format(URL_PREFIX)),
     
     # Header bar
     html.Div([

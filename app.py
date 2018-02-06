@@ -27,6 +27,8 @@ app.config.requests_pathname_prefix = URL_PREFIX
 
 @app.server.route(prefixed_url("scripts/<resource>"))
 def serve_script(resource):
+    if resource == "url_prefix.js":
+        return "var URL_PREFIX = '{}'".format(URL_PREFIX)
     return flask.send_from_directory(SCRIPT_PATH, resource)
 
 @app.server.route(prefixed_url("css/<resource>"))
@@ -42,6 +44,7 @@ app.scripts.append_script({"external_url": "https://code.jquery.com/jquery-3.2.1
 # used for selecting elements in page as they are initialised
 app.scripts.append_script({"external_url": "https://rawgit.com/pie6k/jquery.initialize/master/jquery.initialize.min.js"})
 
+app.scripts.append_script({"external_url": prefixed_url("scripts/url_prefix.js")})
 app.scripts.append_script({"external_url": prefixed_url("scripts/fix_datatable.js")})
 
 # dash example css and own css overrides
