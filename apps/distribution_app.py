@@ -10,10 +10,11 @@ def generate_binned_plot_1s():
     dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-dist-binned1s")
     # dataframe["total_jobs"]-dataframe["empty_jobs"]
 
-    empty_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=1)
+    empty4_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty4_jobs"], name="Empty (4)", marker={"color":"#C21E29"}, width=1)
+    empty3_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty3_jobs"], name="Empty (3)", marker={"color":"#EF751A"}, width=1)
     payload_hist = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=1)
 
-    data = [empty_hist, payload_hist]
+    data = [empty4_hist, empty3_hist, payload_hist]
 
     layout = go.Layout(
         title="Wallclock time (<1200s) distribution of jobs in past 48 hours",
@@ -42,10 +43,11 @@ def generate_binned_plot_10m():
     dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-dist-binned1m")
     # dataframe["total_jobs"]-dataframe["empty_jobs"]
 
-    empty_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty_jobs"], name="Empty", marker={"color":"#C21E29"}, width=1)
+    empty4_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty4_jobs"], name="Empty (4)", marker={"color":"#C21E29"}, width=1)
+    empty3_hist = go.Bar(x=dataframe["minutes"], y=dataframe["empty3_jobs"], name="Empty (3)", marker={"color":"#EF751A"}, width=1)
     payload_hist = go.Bar(x=dataframe["minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=1)
 
-    data = [empty_hist, payload_hist]
+    data = [empty4_hist, empty3_hist, payload_hist]
 
     layout = go.Layout(
         title="Wallclock time binned by minutes of all jobs in past 48 hours",

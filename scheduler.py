@@ -85,8 +85,8 @@ queries = [
     ("0576a6e8-18fd-475a-8c19-3c8aaafe73f7", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
     ("e5d4a76f-7bfe-423a-b50e-e66340ea8bdb", "aws-athena-apfdash-queue-history-30d"),   # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
     ("61922f3a-6cc4-4e21-9eec-cce51cab9fbf", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
-    ("db6956ba-15cc-4e2a-91d1-edb849e12504", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
-    ("c15475b6-a226-494a-abf3-a2b8862c5416", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
+    ("cc5514e8-b85f-4bb5-a2b1-926d8ea57c9b", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
+    ("39aa8317-473b-42cc-9cb8-6a96165c2b35", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
     ("73c5c2cf-14cc-4832-b4f4-c46126339607", "aws-athena-apfdash-queue-binned1s"),      # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
     ("e76a1e9a-63d0-4dc1-8c23-166c89718d58", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
 ]
