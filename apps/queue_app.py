@@ -20,9 +20,9 @@ def generate_plot_24h(queue_name):
     trace1 = go.Bar(
         x=filtered_df["job_time"],
         y=filtered_df["empty4_jobs"],
-        name="Empty (4)",
+        name="Empty (completed)",
         marker=dict(
-            color="#C21E29",
+            color="#EF751A",
         ),
         offset=0.5,
     )
@@ -30,9 +30,9 @@ def generate_plot_24h(queue_name):
     trace2 = go.Bar(
         x=filtered_df["job_time"],
         y=filtered_df["empty3_jobs"],
-        name="Empty (3)",
+        name="Empty (removed)",
         marker=dict(
-            color="#EF751A",
+            color="#C21E29",
         ),
         offset=0.5,
     )
@@ -47,7 +47,7 @@ def generate_plot_24h(queue_name):
         offset=0.5,
     )
     
-    data = [trace1, trace2, trace3]
+    data = [trace2, trace1, trace3]
     
     min_time = datetime.strptime(df["job_time"].min(), "%Y-%m-%d %H:%M:%S.%f")
     max_time = datetime.strptime(df["job_time"].max(), "%Y-%m-%d %H:%M:%S.%f")+timedelta(hours=1)
@@ -122,9 +122,9 @@ def generate_plot_30d(queue_name):
     trace1 = go.Bar(
         x=filtered_df["job_date"],
         y=filtered_df["empty4_jobs"],
-        name="Empty (4)",
+        name="Empty (completed)",
         marker=dict(
-            color="#C21E29",
+            color="#EF751A",
         ),
         offset=0.5,
     )
@@ -132,9 +132,9 @@ def generate_plot_30d(queue_name):
     trace2 = go.Bar(
         x=filtered_df["job_date"],
         y=filtered_df["empty3_jobs"],
-        name="Empty (3)",
+        name="Empty (removed)",
         marker=dict(
-            color="#EF751A",
+            color="#C21E29",
         ),
         offset=0.5,
     )
@@ -150,7 +150,7 @@ def generate_plot_30d(queue_name):
         offset=0.5,
     )
     
-    data = [trace1, trace2, trace3]
+    data = [trace2, trace1, trace3]
     
     
     layout = go.Layout(
@@ -187,78 +187,15 @@ def generate_plot_30d(queue_name):
     return dcc.Graph(id="queue-30d", figure=fig, config={'displayModeBar': False})
 
 
-def generate_distribution(queue_name, ten_minutes=False):
-    dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-scatter")
-    dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
-    
-    if len(dataframe) == 0:
-        max_duration = 600
-    else:
-        max_duration = max(dataframe["remotewallclocktime"])
-    
-    x_range = [0, max_duration]
-    
-    if ten_minutes:
-        dataframe = dataframe[dataframe["remotewallclocktime"] <= 600]
-        x_range = [0, 600]
-    
-    empty = dataframe[dataframe["pandacount"]==0]
-    nonempty = dataframe[dataframe["pandacount"]>0]
-    
-    if ten_minutes:
-        hist1 = go.Histogram(x=empty["remotewallclocktime"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#C21E29"}, name="Empty")
-        hist2 = go.Histogram(x=nonempty["remotewallclocktime"], xbins={"start":0, "end":600, "size":12}, marker={"color":"#3A6CAC"}, name="Payload")
-    else:
-        # bins of minimum width 5 seconds
-        bins = int(max_duration/5)
-        # max 100 bins
-        bins = min(bins, 100)
-        hist1 = go.Histogram(x=empty["remotewallclocktime"], nbinsx=bins, marker={"color":"#C21E29"}, name="Empty")
-        hist2 = go.Histogram(x=nonempty["remotewallclocktime"], nbinsx=bins, marker={"color":"#3A6CAC"}, name="Payload")
-    
-    layout = go.Layout(
-        barmode="stack",
-        title="remotewallclocktime distribution in past 4 hours{}".format(" (duration < 10m)" if ten_minutes else ""),
-        xaxis = go.XAxis(
-            title="remotewallclocktime (s)",
-            fixedrange=True,
-            showgrid=True,
-            gridcolor="darkgrey",
-            autorange=False,
-            range=x_range,
-        ),
-        yaxis = go.YAxis(
-            title="Number of jobs",
-            fixedrange=True,
-            showgrid=True,
-            gridcolor="darkgrey",
-        ),
-        margin=go.Margin(
-            l=55,
-            r=45,
-            b=50,
-            t=30,
-            pad=4
-        ),
-    )
-    
-    fig = {
-        "data": [hist1, hist2],
-        "layout": layout,
-    }
-    
-    
-    return dcc.Graph(id="distribution-histogram-{}".format(["1", "2"][ten_minutes]), figure=fig, config={'displayModeBar': False})
-
 def generate_distribution_prebinned(queue_name):
     dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-queue-binned1s")
     dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
     
-    empty4_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty4_jobs"], name="Empty (4)", marker={"color":"#C21E29"}, width=10, offset=0)
-    empty3_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty3_jobs"], name="Empty (3)", marker={"color":"#EF751A"}, width=10, offset=0)
+    empty4_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty4_jobs"], name="Empty (completed)", marker={"color":"#EF751A"}, width=10, offset=0)
+    empty3_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["empty3_jobs"], name="Empty (removed)", marker={"color":"#C21E29"}, width=10, offset=0)
     payload_bar = go.Bar(x=dataframe["remotewallclocktime"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=10, offset=0)
 
-    data = [empty4_bar, empty3_bar, payload_bar]
+    data = [empty3_bar, empty4_bar, payload_bar]
 
     layout = go.Layout(
         title="Wallclock time (<600s) binned per 10 seconds (past 48h)",
@@ -300,10 +237,10 @@ def generate_distribution_prebinned_10m(queue_name):
     dataframe = Datasources.get_latest_data_for("aws-athena-apfdash-queue-binned10m")
     dataframe = dataframe[dataframe["match_apf_queue"] == queue_name]
     
-    empty4_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty4_jobs"], name="Empty (4)", marker={"color":"#C21E29"}, width=10, offset=0)
-    empty3_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty3_jobs"], name="Empty (3)", marker={"color":"#EF751A"}, width=10, offset=0)
+    empty4_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty4_jobs"], name="Empty (completed)", marker={"color":"#EF751A"}, width=10, offset=0)
+    empty3_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["empty3_jobs"], name="Empty (removed)", marker={"color":"#C21E29"}, width=10, offset=0)
     payload_bar = go.Bar(x=dataframe["remotewallclocktime_minutes"], y=dataframe["total_jobs"]-dataframe["empty_jobs"], name="Payload", marker={"color":"#3A6CAC"}, width=10, offset=0)
-    data = [empty4_bar, empty3_bar, payload_bar]
+    data = [empty3_bar, empty4_bar, payload_bar]
 
     layout = go.Layout(
         title="Wallclock time in minutes binned per 10 minutes (past 48h)",

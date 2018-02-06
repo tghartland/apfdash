@@ -51,9 +51,9 @@ def generate_datatable():
     dataframe = dataframe.rename(columns={
         "match_apf_queue": "Queue",
         "total_jobs": "Jobs",
-        "empty_jobs": "Jobs (empty)",
-        "empty3_jobs": "Jobs (empty 3)",
-        "empty4_jobs": "Jobs (empty 4)",
+        "empty_jobs": "Empty (all)",
+        "empty3_jobs": "Empty (removed)",
+        "empty4_jobs": "Empty (completed)",
         "empty_pcent": "% Empty",
         "remotewallclocktime": "Wallclock (total)",
         "remotewallclocktime_empty": "Wallclock (empty)",
@@ -105,20 +105,20 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     trace1 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
         x=dataframe["empty4_jobs"][0:limit][::-1],
-        name="Empty (4)",
+        name="Empty (completed)",
         orientation="h",
         marker=dict(
-            color="#C21E29",
+            color="#EF751A",
         ),
     )
     
     trace2 = go.Bar(
         y=dataframe["match_apf_queue"][0:limit][::-1],
         x=dataframe["empty3_jobs"][0:limit][::-1],
-        name="Empty (3)",
+        name="Empty (removed)",
         orientation="h",
         marker=dict(
-            color="#EF751A",
+            color="#C21E29",
         ),
     )
     
@@ -132,7 +132,7 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
         ),
     )
     
-    data = [trace1, trace2, trace3]
+    data = [trace2, trace1, trace3]
     layout = go.Layout(
         title="Queue comparison (past 24 hours)",
         barmode="stack",
