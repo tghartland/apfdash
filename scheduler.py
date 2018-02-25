@@ -72,7 +72,10 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
         )
     )
     
-    scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=20), args=(bucket,))
+    # Download the latest data
+    # Leaving a short length of time before doing so because I don't know
+    # if the result file is available immediately.
+    scheduler.add_job(Datasources.download_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15), args=(bucket,))
     
     # Don't want to keep all history, just the most recent. 30 is enough to keep.
     if len(QueryHistory.history) > 30:
@@ -94,15 +97,11 @@ queries = [
 ]
 
 
-# for each query
 for i, (query_id, bucket) in enumerate(queries):
     # add repeating update every 20 minutes
     scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
     
     # run one update as the server starts, staggered so that they do not all run at the same time
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
-    
-    # download the result of the first update after it has completed
-    #scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15+i*5), args=(bucket,))
 
 scheduler.start()
