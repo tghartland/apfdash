@@ -89,7 +89,7 @@ def run_query(query_id, bucket, database="apfhistorypanda", timeout=30):
     # Download the latest data
     # Leaving a short length of time before doing so because I don't know
     # if the result file is available immediately.
-    if execution["QueryExecution"]["Status"]["State"] == "SUCCESS":
+    if execution["QueryExecution"]["Status"]["State"] == "SUCCEEDED":
         scheduler.add_job(Datasources.download_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15), args=(bucket,))
     
     # Don't want to keep all history, just the most recent. 30 is enough to keep.
