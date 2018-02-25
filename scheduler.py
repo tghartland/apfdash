@@ -72,6 +72,8 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
         )
     )
     
+    scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=20), args=(bucket,))
+    
     # Don't want to keep all history, just the most recent. 30 is enough to keep.
     if len(QueryHistory.history) > 30:
         QueryHistory.history.pop(0)
@@ -81,14 +83,14 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
 # new queries using apfhistorypanda database
 queries = [
     # query id                                bucket                                          query name                    description
-    ("d712c576-1b6b-42ab-8958-d4dd50ab2b32", "aws-athena-apfdash-index"),               # pnd_index_24h                 Aggregate data in past 24 hours
-    ("0576a6e8-18fd-475a-8c19-3c8aaafe73f7", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
+    ("f7001c25-4b29-427f-906f-62d0d6d3cce9", "aws-athena-apfdash-index"),               # pnd_index_24h                 Aggregate data in past 24 hours
+    ("ec94f454-9bad-492a-a10b-d1d862445a1f", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
     ("e5d4a76f-7bfe-423a-b50e-e66340ea8bdb", "aws-athena-apfdash-queue-history-30d"),   # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
-    ("61922f3a-6cc4-4e21-9eec-cce51cab9fbf", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
-    ("cc5514e8-b85f-4bb5-a2b1-926d8ea57c9b", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
-    ("39aa8317-473b-42cc-9cb8-6a96165c2b35", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
-    ("73c5c2cf-14cc-4832-b4f4-c46126339607", "aws-athena-apfdash-queue-binned1s"),      # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
-    ("e76a1e9a-63d0-4dc1-8c23-166c89718d58", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
+    ("c8eb3753-78d3-4680-b7f1-4ac17d33558c", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
+    ("e75782ef-f233-4445-b3fb-c74934886e20", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
+    ("15e14204-589a-4864-acb3-ac01674ad51d", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
+    ("81e5dde6-ea6a-4857-b176-c6f35c51c0c8", "aws-athena-apfdash-queue-binned1s"),      # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
+    ("4b263d23-01e0-4364-b58b-ef5ab3d245da", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
 ]
 
 
@@ -101,6 +103,6 @@ for i, (query_id, bucket) in enumerate(queries):
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
     
     # download the result of the first update after it has completed
-    scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15+i*5), args=(bucket,))
+    #scheduler.add_job(Datasources.get_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15+i*5), args=(bucket,))
 
 scheduler.start()
