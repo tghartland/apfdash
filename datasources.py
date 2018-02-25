@@ -12,7 +12,16 @@ from aws import session
 s3 = session.client("s3")
 athena = session.client("athena")
 
+
 def most_recent_object_in_bucket(bucket_name):
+    """Get most recent result filename / modified date from bucket.
+    
+    list_objects returns maximum 1000 results,
+    but if lifetime rules are used for the bucket
+    this should never be an issue. Only the most
+    recent result needs to be kept at all.
+    """
+    
     BucketItem = namedtuple("BucketItem", ["name", "modified"])
     all_items = []
     response = s3.list_objects(
@@ -34,6 +43,7 @@ class Datasources:
 
     @staticmethod
     def get_latest_data_for(bucket_name):
+        """Return a copy of the stored results dataframe for a given bucket name."""
         if bucket_name not in Datasources.query_data:
             Datasources.download_latest_data_for(bucket_name)
         
@@ -42,6 +52,11 @@ class Datasources:
 
     @staticmethod
     def download_latest_data_for(bucket_name):
+        """Download most recent result file and parse into a pandas dataframe.
+        
+        Stores the dataframe and other metadata into Dataframe.query_data
+        dictionary keyed by the bucket name.
+        """
         name, date = most_recent_object_in_bucket(bucket_name)
         stored_query_result = {}
         

@@ -16,7 +16,22 @@ QueryExecutionResult = namedtuple("QueryExecutionResult", ["name", "query_id", "
 class QueryHistory:
     history = []
 
-def run_query(query_id, bucket, database="apfhistorypanda"):
+def run_query(query_id, bucket, database="apfhistorypanda", timeout=30):
+    """
+    Run a given query ID on a database and store the result into a named bucket.
+    
+    Bucket name should not include an s3:// prefix.
+    This function waits until the query has finished running
+    and then adds a job to the scheduler to download the result
+    file after waiting 15 seconds, if the query succeeded.
+    
+    If the timeout argument is exceeded when waiting for the query
+    to complete, it sets the status to "*TIMEOUT", which can be
+    seen in the debug page query history list.
+    It is marked with an asterisk to differentiate it from an
+    actual athena result status string, as is a
+    *TooManyRequestsException, if one should occur.
+    """
     query = athena.get_named_query(NamedQueryId=query_id)
     
     try:
@@ -36,7 +51,7 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
                 query_id,
                 "-",
                 datetime.now(tzutc()),
-                "TooManyRequestsException",
+                "*TooManyRequestsException",
                 0,
                 0,
             )
@@ -51,7 +66,6 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
     execution = athena.get_query_execution(QueryExecutionId=execution_id)
     
     wait_start_time = time.time()
-    timeout = 30
     
     while execution["QueryExecution"]["Status"]["State"] == "RUNNING":
         if time.time()-wait_start_time > timeout:
@@ -75,7 +89,8 @@ def run_query(query_id, bucket, database="apfhistorypanda"):
     # Download the latest data
     # Leaving a short length of time before doing so because I don't know
     # if the result file is available immediately.
-    scheduler.add_job(Datasources.download_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15), args=(bucket,))
+    if execution["QueryExecution"]["Status"]["State"] == "SUCCESS":
+        scheduler.add_job(Datasources.download_latest_data_for, "date", run_date=datetime.now()+timedelta(seconds=15), args=(bucket,))
     
     # Don't want to keep all history, just the most recent. 30 is enough to keep.
     if len(QueryHistory.history) > 30:
