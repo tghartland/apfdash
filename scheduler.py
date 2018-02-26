@@ -111,12 +111,17 @@ queries = [
     ("4b263d23-01e0-4364-b58b-ef5ab3d245da", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
 ]
 
+def add_repeating_query_to_scheduler(query_id, bucket):
+    print("Adding query to scheduler", query_id, bucket)
+    scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
 
 for i, (query_id, bucket) in enumerate(queries):
-    # add repeating update every 20 minutes
-    scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
+    # Use single job to stagger adding repeating update every 20 minutes
+    # If all queries run at the same time, it will sometimes trigger a TooManyRequests exception
+    # Wait 20*i seconds before adding the proper job to the scheduler
+    scheduler.add_job(add_repeating_query_to_scheduler, "date", run_date=datetime.now()+timedelta(seconds=5+20*i), args=(query_id, bucket))
     
-    # run one update as the server starts, staggered so that they do not all run at the same time
+    # Run one update as the server starts, staggered so that they do not all run at the same time
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
 
 scheduler.start()
