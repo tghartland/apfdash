@@ -81,7 +81,7 @@ def display_page(pathname):
             html.Div(
                 html.H4(
                     html.Div(
-                        "Help for this page",
+                        "Help",
                         id="help-panel-collapsing-link",
                     ),
                     className="panel-title"
@@ -93,8 +93,6 @@ def display_page(pathname):
                     help_panel,
                     className="panel-body"
                 ),
-                id="collapsehelp",
-                className="panel-collapse collapse"
             ),
             ],
             className="panel panel-default"
