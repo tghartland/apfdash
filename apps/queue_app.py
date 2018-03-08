@@ -274,7 +274,7 @@ def generate_distribution_prebinned_10m(queue_name):
 
 
 help_panel = [
-    html.P("Red = bad, blue = good."),
+    html.P("Recent 48hr and 30day job counts from a single queue, grouped by outcome")
 ]
 
 
@@ -289,7 +289,7 @@ def generate_layout(queue_name):
     plot2 = generate_plot_30d(queue_name)
     
     layout =  [
-        html.H4(queue_name),
+        html.H4(html.A(queue_name, href='/query/{}/'.format(queue_name))),
         html.Div([
             html.Div(
                 plotdiv,
