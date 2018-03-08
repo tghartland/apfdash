@@ -1,11 +1,11 @@
 // Click the datatable filters button to have it enabled by default.
 $.initialize("div.react-grid-Toolbar .tools button.btn", function() {
-	$(this).click();
+    $(this).click();
 });
 
 // And hide the datatable toolbar altogether.
 $.initialize("div.react-grid-Toolbar", function() {
-	$(this).hide();
+    $(this).hide();
 });
 
 // Hide the dash undo/redo buttons, as they float over some of the plots.
