@@ -46,7 +46,8 @@ def generate_datatable():
     dataframe["emptywc_pcent"] = (100*dataframe["remotewallclocktime_empty"]/dataframe["remotewallclocktime"]).round(2)
     
     
-    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty3_jobs", "empty4_jobs", "empty_pcent", "remotewallclocktime", "remotewallclocktime_empty", "emptywc_pcent"]]
+    dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty3_jobs", "empty4_jobs", "empty_pcent", "emptywc_pcent"]]
+    #dataframe = dataframe[["match_apf_queue", "total_jobs", "empty_jobs", "empty3_jobs", "empty4_jobs", "empty_pcent", "remotewallclocktime", "remotewallclocktime_empty", "emptywc_pcent"]]
     #dataframe.set_index(["Queue", "Jobs", "Empty jobs", "% Empty", "Wallclock", "Wallclock (empty)", "Wallclock (% empty)"])
     dataframe = dataframe.rename(columns={
         "match_apf_queue": "Queue",
@@ -55,8 +56,8 @@ def generate_datatable():
         "empty3_jobs": "Empty (removed)",
         "empty4_jobs": "Empty (completed)",
         "empty_pcent": "% Empty",
-        "remotewallclocktime": "Wallclock (total)",
-        "remotewallclocktime_empty": "Wallclock (empty)",
+#        "remotewallclocktime": "Wallclock (total)",
+#        "remotewallclocktime_empty": "Wallclock (empty)",
         "emptywc_pcent": "Wallclock (% empty)",
     })
     # records = dataframe.to_dict("records")
@@ -80,14 +81,12 @@ def generate_datatable():
 
 @app.callback(
     Output("queue-comparison", "figure"),
-    [Input(component_id='queue-datatable', component_property='rows'),
-     Input("num-queues-dropdown", "value")],
+    [Input(component_id='queue-datatable', component_property='rows')]
 )
-def update_plot(rows, limit):
+def update_plot(rows, limit=25):
     selected_rows = [row["Queue"] for row in rows]
     return generate_plot(Datasources.get_latest_data_for("aws-athena-apfdash-index"),
         filtered_by=selected_rows, limit=limit)
-
 
 def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     dataframe.insert(5, "long_jobs", dataframe["total_jobs"]-dataframe["empty_jobs"])
@@ -134,15 +133,16 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     
     data = [trace2, trace1, trace3]
     layout = go.Layout(
-        title="Queue comparison (past 24 hours)",
-        barmode="stack",
+        title = "Queue comparison (past 24 hours)",
+        barmode = "stack",
+        legend = {'x': 1.0, 'y': 0.0},
         margin=dict(
             t=30,
             l=275,
             b=40,
         ),
         xaxis = go.XAxis(
-            title="Jobs",
+            title="Job count",
             fixedrange=True,
         ),
         yaxis = go.YAxis(
@@ -156,30 +156,34 @@ def generate_plot(dataframe, limit=10, search_term=None, filtered_by=None):
     }
 
 help_panel = [
-    html.P("The data table can be sorted and filtered."),
-    html.P("Queue names in the comparison plot are clickable links."),
+    html.Div([
+        html.Div([
+            html.P("NOTE: this dashboard is under active development"),
+            html.P("The default ordering is by Empty (All)."),
+            html.P("Click on table headings to reorder (ascending/descending)"),
+        ],
+        className="index-grid-left",
+        ),
+        html.Div([
+            html.Ul([
+                html.Li(html.P([html.Dfn('Payload'), ' : Job completed ok and ran a payload'])),
+                html.Li(html.P([html.Dfn('Empty (completed)'),' : Job completed ok but did not run a payload'])),
+                html.Li(html.P([html.Dfn('Empty (removed)'), ' : Job was removed by Factory due to middleware problem'])),
+            ],
+            style={'list-style-type':'none'}
+            ),
+        ],
+        className="index-grid-right",
+        ),
+    ],
+    className="index-grid-container",
+    )
 ]
 
 def generate_layout():
     layout = [
         html.Div([
             html.Div([
-                html.H4("Queue comparison", id="title"),
-                html.Div([
-                    html.Div([html.Label('# queues displayed'),], style={"float":"left"}),
-                    html.Div([
-                        dcc.Dropdown(
-                            options=[
-                                {"label":"10", "value":10},
-                                {"label":"25", "value":25},
-                                {"label":"50", "value":50},
-                            ],
-                            value=25,
-                            clearable=False,
-                            id="num-queues-dropdown",
-                        ),
-                    ], style={"width": "80px", "display":"inline-block"})
-                ]),
                 dcc.Graph(id="queue-comparison", figure={}, config={'displayModeBar': False}),
                 ],
                 className="index-grid-left",
