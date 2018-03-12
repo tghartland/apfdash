@@ -33,7 +33,7 @@ def most_recent_object_in_bucket(bucket_name):
         
     return max(all_items, key=lambda obj: obj.modified)
 
-def get_last_object_name_per_day(bucket_name):
+def get_last_object_per_day(bucket_name):
     """Get the last object per day from a bucket
     
     Used to construct the past 30d history from old results files.
@@ -48,7 +48,7 @@ def get_last_object_name_per_day(bucket_name):
         all_items.append(BucketItem(obj["Key"], obj["LastModified"]))
     
     while response["IsTruncated"]:
-        # Keep listing objects until list is no longer truncated
+        # Keep listing objects until returned list is no longer truncated
         next_marker = response["NextMarker"]
         response = s3.list_objects(
             Bucket=bucket_name,
@@ -85,7 +85,7 @@ def construct_30d_history(bucket_name):
     
     Used so that 30d history only needs 48 hour data bucket
     """
-    last_obj_per_day = get_last_object_name_per_day(bucket_name)
+    last_obj_per_day = get_last_object_per_day(bucket_name)
     
     # dict keyed by (queue_name, date) pairs
     # used to store best data for each queue/date pair
@@ -108,13 +108,16 @@ def construct_30d_history(bucket_name):
         rows = [list(row[1]) for row in csv_data.iterrows()]
         
         for queue_name, date, total_jobs, empty, empty3, empty4 in rows:
+            # add this queue/data pair to data if it doesn't already exist there
             if (queue_name, date) not in queue_date_data:
                 queue_date_data[(queue_name, date)] = [queue_name, date, total_jobs, empty, empty3, empty4]
                 continue
             
+            # update queue/data pair with this data if new total_jobs is higher
             if total_jobs > queue_date_data[(queue_name, date)][2]:
                 queue_date_data[(queue_name, date)] = [queue_name, date, total_jobs, empty, empty3, empty4]
     
+    # remake dataframe from queue/data data and column names from downloaded csvs
     history_data = pd.DataFrame(list(queue_date_data.values()), columns=keys)
     
     return history_data, last_obj_per_day
