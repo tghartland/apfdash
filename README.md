@@ -20,3 +20,8 @@ location `~/.aws/credentials`. If the key variable *is* set, it will be assumed 
 the other two are set as well.
 
 `APFDASH_URL_PREFIX` defaults to `"/"` if it is not set.
+
+### Other
+
+Uses jquery.initialize https://github.com/pie6k/jquery.initialize  
+Local version is jquery.initialize.min.js from commit [f9a071e627](https://github.com/pie6k/jquery.initialize/tree/f9a071e627c72d3827c2612e3d5599878e3ef42f)

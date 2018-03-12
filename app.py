@@ -42,10 +42,10 @@ app.scripts.append_script({"external_url": "https://code.jquery.com/jquery-3.2.1
 #app.scripts.append_script({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"})
 
 # used for selecting elements in page as they are initialised
-app.scripts.append_script({"external_url": "https://rawgit.com/pie6k/jquery.initialize/master/jquery.initialize.min.js"})
+app.scripts.append_script({"external_url": prefixed_url("scripts/jquery.initialize.min.js")})
 
 app.scripts.append_script({"external_url": prefixed_url("scripts/url_prefix.js")})
-app.scripts.append_script({"external_url": prefixed_url("scripts/fix_datatable.js")})
+app.scripts.append_script({"external_url": prefixed_url("scripts/index.js")})
 
 # dash example css and own css overrides
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
