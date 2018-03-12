@@ -90,7 +90,7 @@ def generate_plot_24h(queue_name):
 
 
 def generate_plot_30d(queue_name):
-    df = Datasources.get_latest_data_for("aws-athena-apfdash-queue-history-30d")
+    df = Datasources.get_latest_data_for("aws-athena-apfdash-queue-history-30d-2")
     df["job_date"] = df["job_date"].apply(lambda d: datetime.date(datetime.strptime(d, "%Y-%m-%d")))
     filtered_df = df[df["match_apf_queue"] == queue_name]
     

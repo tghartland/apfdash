@@ -103,7 +103,7 @@ queries = [
     # query id                                bucket                                          query name                    description
     ("f7001c25-4b29-427f-906f-62d0d6d3cce9", "aws-athena-apfdash-index"),               # pnd_index_24h                 Aggregate data in past 24 hours
     ("ec94f454-9bad-492a-a10b-d1d862445a1f", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
-    ("e5d4a76f-7bfe-423a-b50e-e66340ea8bdb", "aws-athena-apfdash-queue-history-30d"),   # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
+    ("5ec71f38-a2b9-4294-a2a0-cbb9c0f23b1b", "aws-athena-apfdash-queue-history-30d-2"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
     ("c8eb3753-78d3-4680-b7f1-4ac17d33558c", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
     ("e75782ef-f233-4445-b3fb-c74934886e20", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
     ("15e14204-589a-4864-acb3-ac01674ad51d", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
