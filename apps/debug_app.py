@@ -41,7 +41,7 @@ def debug_query_history():
         yield row[3].strftime("%a %d %b %H:%M:%S")
         yield row[4]
         yield humanize.naturalsize(row[5])
-        yield "${:.02f}".format(5*int(row[5])/1e12)
+        yield "${:.03f}".format(5*int(row[5])/1e12)
         yield humanize.intcomma(row[6])
     
     rows = [html.Tr([html.Td(n) for n in column_names])]
