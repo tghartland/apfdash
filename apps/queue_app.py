@@ -289,7 +289,7 @@ def generate_layout(queue_name):
     plot2 = generate_plot_30d(queue_name)
     
     layout =  [
-        html.H4(html.A(queue_name, href='/query/{}/'.format(queue_name))),
+        html.H4(children=[html.A(queue_name, href='/query/{}/'.format(queue_name)),' (link to job records)']),
         html.Div([
             html.Div(
                 plotdiv,
