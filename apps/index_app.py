@@ -86,6 +86,8 @@ def generate_datatable():
 )
 def update_url_share(filters):
     parameters = {}
+    if filters is None:
+        return "http://apfmon.lancs.ac.uk/dash"
     if "Queue" in filters:
         parameters["queue"] = filters["Queue"]["filterTerm"]
     if len(parameters) > 0:
