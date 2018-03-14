@@ -36,6 +36,14 @@ $.initialize("text a", function() {
     };
 });
 
+// Set initial queue search from URL parameters
+$.initialize(".react-grid-HeaderCell div div input:eq(0)", function() {
+    let params = (new URL(location)).searchParams;
+    if (params.get("queue")) {
+        $(this)[0].value = params.get("queue");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
 
 // Add examples to data table's search box
 // :eq(1) selects only the second search box
@@ -52,4 +60,8 @@ $.initialize(".react-grid-HeaderCell div div input:eq(3)", function() {
 $.initialize("#help-panel-collapsing-link", function() {
     $(this)[0].setAttribute("data-toggle", "collapse");
     $(this)[0].setAttribute("href", "#collapsehelp")
+});
+
+$.initialize("#url-share-box", function() {
+    $(this)[0].setAttribute("readonly", "readonly");
 });

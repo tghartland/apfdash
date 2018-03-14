@@ -20,6 +20,7 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 
 import pandas as pd
+import urllib.parse
 
 from app import app, prefixed_url
 
@@ -66,7 +67,7 @@ def generate_datatable():
     #     records[i] = record
     #
     # print(records)
-    
+
     table = dt.DataTable(
         rows=dataframe.to_dict("records"),
         columns=dataframe.columns,
@@ -78,6 +79,18 @@ def generate_datatable():
     )
     
     return table
+
+@app.callback(
+    Output("url-share-box", "value"),
+    [Input(component_id="queue-datatable", component_property="filters")]
+)
+def update_url_share(filters):
+    parameters = {}
+    if "Queue" in filters:
+        parameters["queue"] = filters["Queue"]["filterTerm"]
+    if len(parameters) > 0:
+        return "http://apfmon.lancs.ac.uk/dash?{}".format(urllib.parse.urlencode(parameters))
+    return "http://apfmon.lancs.ac.uk/dash"
 
 @app.callback(
     Output("queue-comparison", "figure"),
@@ -193,6 +206,10 @@ def generate_layout():
                 # ),
             ),
             html.Div([
+                    html.Div([
+                        html.P("Share link to search: ", style={"display": "inline-block", "margin-right": "10px"}),
+                        dcc.Input(value="http://apfmon.lancs.ac.uk/dash", id="url-share-box", readonly="readonly", style={"width": "500px", "display": "inline-block", "font": "inherit"}),
+                    ], style={"margin-bottom": "3px"}),
                     generate_datatable(),
                 ],
                 className="index-grid-right",
