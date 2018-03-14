@@ -42,7 +42,7 @@ app.layout = html.Div([
         dcc.Link("Distribution", href=prefixed_url("distribution/"), style={"margin":"5px"}),
         dcc.Link("Debug", href=prefixed_url("debug/"), style={"margin":"5px"}),
         html.Hr(style={"margin": "0px", "margin-top": "2px", "margin-bottom":"10px"}),
-    ], style={"width": "100%"}),
+    ], style={"width": "100%", "margin-top": "2px"}),
     
     # Div to load page content into
     html.Div(id='page-content', style={"width": "99%", "height":"100%", "left": "0.5%", "position": "relative"})
