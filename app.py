@@ -48,7 +48,7 @@ app.scripts.append_script({"external_url": prefixed_url("scripts/url_prefix.js")
 app.scripts.append_script({"external_url": prefixed_url("scripts/index.js")})
 
 # dash example css and own css overrides
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+app.css.append_css({"external_url": prefixed_url("css/dash_base.css")})
 
 # custom bootstrap css/js with only panels enabled
 # from https://getbootstrap.com/docs/3.3/customize
