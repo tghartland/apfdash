@@ -49,11 +49,19 @@ def get_last_object_per_day(bucket_name):
     
     while response["IsTruncated"]:
         # Keep listing objects until returned list is no longer truncated
-        next_marker = response["NextMarker"]
+        
+        # Response will either container a NextMarker to get the next objects
+        # or the Key of the last object is used as the Marker
+        if "NextMarker" in response:
+            next_marker = response["NextMarker"]
+        else:
+            next_marker = response["Contents"][-1]["Key"]
+        
         response = s3.list_objects(
             Bucket=bucket_name,
             Marker=next_marker,
         )
+        
         for obj in response["Contents"]:
             if ".metadata" in obj["Key"]: continue
             all_items.append(BucketItem(obj["Key"], obj["LastModified"]))
