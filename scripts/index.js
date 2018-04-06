@@ -36,15 +36,6 @@ $.initialize("text a", function() {
     };
 });
 
-// Set initial queue search from URL parameters
-$.initialize(".react-grid-HeaderCell div div input:eq(0)", function() {
-    let params = (new URL(location)).searchParams;
-    if (params.get("queue")) {
-        $(this)[0].value = params.get("queue");
-        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
-    }
-});
-
 // Add examples to data table's search box
 // :eq(1) selects only the second search box
 $.initialize(".react-grid-HeaderCell div div input:gt(0)", function() {
@@ -64,4 +55,63 @@ $.initialize("#help-panel-collapsing-link", function() {
 
 $.initialize("#url-share-box", function() {
     $(this)[0].setAttribute("readonly", "readonly");
+});
+
+
+
+// Set initial data table filters from URL parameters
+$.initialize(".react-grid-HeaderCell div div input:eq(0)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("q")) {
+        $(this)[0].value = params.get("q");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(1)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("j")) {
+        $(this)[0].value = params.get("j");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(2)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("e1")) {
+        $(this)[0].value = params.get("e1");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(3)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("e2")) {
+        $(this)[0].value = params.get("e2");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(4)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("e3")) {
+        $(this)[0].value = params.get("e3");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(5)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("e4")) {
+        $(this)[0].value = params.get("e4");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
+});
+
+$.initialize(".react-grid-HeaderCell div div input:eq(6)", function() {
+    var params = (new URL(location)).searchParams;
+    if (params.get("e5")) {
+        $(this)[0].value = params.get("e5");
+        $(this)[0].dispatchEvent(new Event("input", {"bubbles": true}));
+    }
 });

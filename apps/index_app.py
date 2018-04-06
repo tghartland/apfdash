@@ -80,18 +80,34 @@ def generate_datatable():
     
     return table
 
+
 @app.callback(
     Output("url-share-box", "value"),
     [Input(component_id="queue-datatable", component_property="filters")]
 )
 def update_url_share(filters):
     parameters = {}
+    
     if filters is None:
         return "http://apfmon.lancs.ac.uk/dash"
-    if "Queue" in filters:
-        parameters["queue"] = filters["Queue"]["filterTerm"]
+    
+    names_to_parameters = {
+        "Queue": "q",
+        "Jobs": "j",
+        "Empty (all)": "e1",
+        "Empty (removed)": "e2",
+        "Empty (completed)": "e3",
+        "% Empty": "e4",
+        "Wallclock (% empty)": "e5",
+    }
+    
+    for name, parameter in names_to_parameters.items():
+        if name in filters:
+            parameters[parameter] = filters[name]["filterTerm"]
+    
     if len(parameters) > 0:
         return "http://apfmon.lancs.ac.uk/dash?{}".format(urllib.parse.urlencode(parameters))
+    
     return "http://apfmon.lancs.ac.uk/dash"
 
 @app.callback(
@@ -223,7 +239,6 @@ def generate_layout():
                 #     "display":"table",
                 # }
             ),
-            
         ],
         className="index-grid-container",
         # style={
