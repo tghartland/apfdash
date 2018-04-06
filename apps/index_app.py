@@ -76,6 +76,8 @@ def generate_datatable():
         editable=False,
         id="queue-datatable",
         min_height=800,
+        sortColumn="Empty (all)",
+        sortDirection="DESC"
     )
     
     return table
