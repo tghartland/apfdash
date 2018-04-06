@@ -99,27 +99,28 @@ def run_query(query_id, bucket, database="apfhistorypanda", timeout=30):
 
 
 # new queries using apfhistorypanda database
+# t is time between queries (in minutes)
 queries = [
-    # query id                                bucket                                          query name                    description
-    ("f7001c25-4b29-427f-906f-62d0d6d3cce9", "aws-athena-apfdash-index"),               # pnd_index_24h                 Aggregate data in past 24 hours
-    ("ec94f454-9bad-492a-a10b-d1d862445a1f", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
-    ("5ec71f38-a2b9-4294-a2a0-cbb9c0f23b1b", "aws-athena-apfdash-queue-history-30d-2"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
-    ("c8eb3753-78d3-4680-b7f1-4ac17d33558c", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
-    ("e75782ef-f233-4445-b3fb-c74934886e20", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
-    ("15e14204-589a-4864-acb3-ac01674ad51d", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
-    ("81e5dde6-ea6a-4857-b176-c6f35c51c0c8", "aws-athena-apfdash-queue-binned1s"),      # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
-    ("4b263d23-01e0-4364-b58b-ef5ab3d245da", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
+    #t   query id                                bucket                                          query name                    description
+    (30, "f7001c25-4b29-427f-906f-62d0d6d3cce9", "aws-athena-apfdash-index"),               # pnd_index_24h                 Aggregate data in past 24 hours
+    (30, "ec94f454-9bad-492a-a10b-d1d862445a1f", "aws-athena-apfdash-queue-history"),       # pnd_jobs_hourly_48h           hourly jobs data over past 48 hours
+    (30, "5ec71f38-a2b9-4294-a2a0-cbb9c0f23b1b", "aws-athena-apfdash-queue-history-30d-2"), # pnd_jobs_daily_30d            daily jobs data over 30 days per queue
+    (30, "c8eb3753-78d3-4680-b7f1-4ac17d33558c", "aws-athena-apfdash-scatter"),             # pnd_all_4h                    all columns for jobs in past 4 hours
+    (60, "e75782ef-f233-4445-b3fb-c74934886e20", "aws-athena-apfdash-dist-binned1s"),       # pnd_wc_pandacount_binned_48h  all wallclock, pandacount for wc<1200 past 48 hours
+    (60, "15e14204-589a-4864-acb3-ac01674ad51d", "aws-athena-apfdash-dist-binned1m"),       # pnd_mins_total_empty_48h      all wc time binned into minutes for past 48 hours
+    (30, "81e5dde6-ea6a-4857-b176-c6f35c51c0c8", "aws-athena-apfdash-queue-binned1s"),      # pnd_q_wcbinned_jobs_empty     Jobs in past 48 hours binned by wc time per queue
+    (30, "4b263d23-01e0-4364-b58b-ef5ab3d245da", "aws-athena-apfdash-queue-binned10m"),     # pnd_q_wcbinned10m_jobs_empty  Jobs in past 48 hours binned by 10 minutes wc time per queue
 ]
 
-def add_repeating_query_to_scheduler(query_id, bucket):
+def add_repeating_query_to_scheduler(update_time, query_id, bucket):
     print("Adding query to scheduler", query_id, bucket)
-    scheduler.add_job(run_query, "interval", minutes=20, args=(query_id, bucket))
+    scheduler.add_job(run_query, "interval", minutes=update_time, args=(query_id, bucket))
 
-for i, (query_id, bucket) in enumerate(queries):
-    # Use single job to stagger adding repeating update every 20 minutes
+for i, (update_time, query_id, bucket) in enumerate(queries):
+    # Use single job to stagger adding repeating queries
     # If all queries run at the same time, it will sometimes trigger a TooManyRequests exception
-    # Wait 20*i seconds before adding the proper job to the scheduler
-    scheduler.add_job(add_repeating_query_to_scheduler, "date", run_date=datetime.now()+timedelta(seconds=5+20*i), args=(query_id, bucket))
+    # So wait 20*i seconds before adding the proper job to the scheduler
+    scheduler.add_job(add_repeating_query_to_scheduler, "date", run_date=datetime.now()+timedelta(seconds=5+20*i), args=(update_time, query_id, bucket))
     
     # Run one update as the server starts, staggered so that they do not all run at the same time
     scheduler.add_job(run_query, "date", run_date=datetime.now()+timedelta(seconds=5+i*5), args=(query_id, bucket))
