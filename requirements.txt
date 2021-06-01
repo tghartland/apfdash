@@ -34,5 +34,5 @@ s3transfer==0.1.13
 six==1.11.0
 traitlets==4.3.2
 tzlocal==1.5.1
-urllib3==1.24.1
+urllib3==1.26.5
 Werkzeug==0.14.1
